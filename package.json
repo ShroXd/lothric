@@ -1,12 +1,16 @@
 {
   "name": "lothric",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "version": "0.0.1",
   "description": "Long May The Sun Shine",
   "main": "lib/bundle.umd.js",
   "module": "lib/bundle.esm.js",
   "typings": "lib/types/index.d.ts",
   "scripts": {
-    "test": "jest --config jest.config.js --coverage --verbose -u",
+    "test": "yarn lint && jest --config jest.config.js --coverage --verbose -u",
     "build": "rollup -c",
     "dev": "rollup -c rollup.config.js -w",
     "lint": "tslint -p tsconfig.json",
@@ -30,6 +34,7 @@
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@types/jest": "^26.0.14",
     "jest": "^26.5.3",
+    "lerna": "^3.22.1",
     "prettier": "^2.1.2",
     "rollup": "^2.32.0",
     "rollup-plugin-commonjs": "^10.1.0",
