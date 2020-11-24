@@ -8,19 +8,25 @@
     "test": "yarn lint && jest --config jest.config.js --coverage --verbose -u",
     "build": "yarn lint && node ./scripts/build.js",
     "prepublishOnly": "yarn build",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tsconfig.json",
+    "commit": "git-cz",
+    "changelog": "conventional-changelog -i CHANGELOG.md -s"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@types/jest": "^26.0.14",
     "chalk": "^4.1.0",
     "conventional-changelog": "^3.1.24",
+    "conventional-changelog-cli": "^2.1.1",
+    "cz-conventional-changelog": "^3.3.0",
     "dts-bundle": "^0.7.3",
     "execa": "^4.1.0",
     "fs-extra": "^9.0.1",
+    "husky": "^4.3.0",
     "is-builtin-module": "^3.0.0",
     "jest": "^26.5.3",
     "lerna": "^3.22.1",
+    "lint-staged": "^10.5.2",
     "markdown-toc": "^1.2.0",
     "packages": "^0.0.8",
     "path": "^0.12.7",
@@ -36,5 +42,21 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^4.0.3"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "npm run lint",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
