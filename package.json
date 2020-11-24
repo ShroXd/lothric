@@ -7,8 +7,7 @@
   "scripts": {
     "test": "yarn lint && jest --config jest.config.js --coverage --verbose -u",
     "build": "yarn lint && node ./scripts/build.js",
-    "prepublishOnly": "yarn toc && yarn build",
-    "toc": "markdown-toc -i README.md",
+    "prepublishOnly": "yarn build",
     "lint": "tslint -p tsconfig.json"
   },
   "devDependencies": {
