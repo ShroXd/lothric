@@ -1,5 +1,5 @@
 {
-  "name": "lothric-monorepo",
+  "name": "lothric",
   "private": true,
   "workspaces": [
     "packages/*"
