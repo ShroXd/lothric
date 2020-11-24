@@ -20,10 +20,8 @@
     "type": "git",
     "url": "git+https://github.com/ShroXd/lothric.git"
   },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
-  },
   "bugs": {
     "url": "https://github.com/ShroXd/lothric/issues"
-  }
+  },
+  "gitHead": "4d7d6ee78bb2d1cc0b093d2cdb7fe19014ea4a50"
 }
