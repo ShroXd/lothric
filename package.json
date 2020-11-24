@@ -1,6 +1,6 @@
 {
   "name": "lothric",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Long May The Sun Shine",
   "main": "lib/bundle.umd.js",
   "module": "lib/bundle.esm.js",
