@@ -1,18 +1,18 @@
 {
   "name": "@lothric/compiler",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": "ShroXd <ShroXdF@gmail.com>",
   "homepage": "https://github.com/ShroXd/lothric/tree/master/packages/compiler#readme",
   "license": "MIT",
-  "main": "lib/compiler.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "main": "dist/compiler.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
+  "buildOptions": {
+    "extractDts": true
+  },
   "publishConfig": {
     "access": "public"
   },

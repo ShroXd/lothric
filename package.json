@@ -11,12 +11,11 @@
   "typings": "lib/types/index.d.ts",
   "scripts": {
     "test": "yarn lint && jest --config jest.config.js --coverage --verbose -u",
-    "build": "rollup -c",
-    "dev": "rollup -c rollup.config.js -w",
+    "build": "yarn lint && node ./scripts/build.js",
+    "prepublishOnly": "yarn toc && yarn build",
     "lint": "tslint -p tsconfig.json",
     "format": "prettier --write --config .prettierrc src/*.ts",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run test && npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
@@ -33,8 +32,16 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@types/jest": "^26.0.14",
+    "chalk": "^4.1.0",
+    "dts-bundle": "^0.7.3",
+    "execa": "^4.1.0",
+    "fs-extra": "^9.0.1",
+    "is-builtin-module": "^3.0.0",
     "jest": "^26.5.3",
     "lerna": "^3.22.1",
+    "markdown-toc": "^1.2.0",
+    "packages": "^0.0.8",
+    "path": "^0.12.7",
     "prettier": "^2.1.2",
     "rollup": "^2.32.0",
     "rollup-plugin-commonjs": "^10.1.0",
@@ -46,13 +53,5 @@
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.0.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ShroXd/lothric.git"
-  },
-  "bugs": {
-    "url": "https://github.com/ShroXd/lothric/issues"
-  },
-  "homepage": "https://github.com/ShroXd/lothric#readme"
+  }
 }
