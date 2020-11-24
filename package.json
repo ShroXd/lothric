@@ -4,35 +4,18 @@
   "workspaces": [
     "packages/*"
   ],
-  "version": "0.0.1",
-  "description": "Long May The Sun Shine",
-  "main": "lib/bundle.umd.js",
-  "module": "lib/bundle.esm.js",
-  "typings": "lib/types/index.d.ts",
   "scripts": {
     "test": "yarn lint && jest --config jest.config.js --coverage --verbose -u",
     "build": "yarn lint && node ./scripts/build.js",
     "prepublishOnly": "yarn toc && yarn build",
-    "lint": "tslint -p tsconfig.json",
-    "format": "prettier --write --config .prettierrc src/*.ts",
-    "prepare": "npm run build",
-    "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
-    "postversion": "git push && git push --tags"
+    "toc": "markdown-toc -i README.md",
+    "lint": "tslint -p tsconfig.json"
   },
-  "files": [
-    "lib/**/*"
-  ],
-  "keywords": [
-    "reactivity",
-    "typescript"
-  ],
-  "author": "shroxd <shroxdf@gmail.com> (https://www.bebopser.com)",
-  "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^9.0.0",
     "@types/jest": "^26.0.14",
     "chalk": "^4.1.0",
+    "conventional-changelog": "^3.1.24",
     "dts-bundle": "^0.7.3",
     "execa": "^4.1.0",
     "fs-extra": "^9.0.1",
