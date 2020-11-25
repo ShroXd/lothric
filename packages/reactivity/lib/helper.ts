@@ -19,3 +19,6 @@ export const defaultMutationObserver: MutationObserver = (target: any, key?: any
 export const defaultDistortionHandler: DistortionHandler = (value: any) => value;
 export const defaultIsValueObservable: IsValueObservable = (value: any) =>
   !(value === null || typeof value !== 'object');
+
+export type WrappedGetter = () => any;
+export type WrappedSetter = (value: any) => void;
