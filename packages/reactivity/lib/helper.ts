@@ -20,5 +20,7 @@ export const defaultDistortionHandler: DistortionHandler = (value: any) => value
 export const defaultIsValueObservable: IsValueObservable = (value: any) =>
   !(value === null || typeof value !== 'object');
 
+export type OriginalGetter = () => any;
+export type OriginalSetter = (value: any) => void;
 export type WrappedGetter = () => any;
 export type WrappedSetter = (value: any) => void;

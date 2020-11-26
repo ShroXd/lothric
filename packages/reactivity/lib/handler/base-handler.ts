@@ -1,6 +1,14 @@
-import { WrappedGetter, WrappedSetter } from '../helper';
+import { OriginalGetter, OriginalSetter, WrappedGetter, WrappedSetter } from '../helper';
 import { Reactivity } from '../reactivity';
-import { ArrayPush, getOwnPropertyNames, getOwnPropertySymbols, getPrototypeOf } from '../utils';
+import {
+  ArrayPush,
+  getOwnPropertyDescriptor,
+  getOwnPropertyNames,
+  getOwnPropertySymbols,
+  getPrototypeOf,
+  isUndefined,
+  ObjectDefineProperty,
+} from '../utils';
 
 export type ShadowTarget = object;
 
@@ -15,8 +23,8 @@ export abstract class BaseHandler {
 
   /* Base implement in ShareHandler */
   abstract transmitValueWrap(value: any): any;
-  abstract transmitGetterWrap(originalGet: WrappedGetter): WrappedGetter;
-  abstract transmitSetterWrap(originalSet: WrappedSetter): WrappedSetter;
+  abstract transmitGetterWrap(originalGet: OriginalGetter): WrappedGetter;
+  abstract transmitSetterWrap(originalSet: OriginalSetter): WrappedSetter;
 
   abstract set(target: ShadowTarget, key: PropertyKey, value: any): boolean;
   // abstract get(target: ShadowTarget, key: PropertyKey): any;
@@ -28,7 +36,6 @@ export abstract class BaseHandler {
   // abstract getPrototypeOf(target: ShadowTarget): object;
   // abstract isExtensible(target: ShadowTarget): boolean;
   abstract preventExtensions(target: ShadowTarget): boolean;
-  abstract getOwnPropertyDescriptor(target: ShadowTarget, key: PropertyKey): PropertyDescriptor | undefined;
 
   apply(target: ShadowTarget, thisArg: any, argsArray: any[]): any {
     // nothing
@@ -72,5 +79,14 @@ export abstract class BaseHandler {
 
   isExtensible(target: ShadowTarget): boolean {
     return true;
+  }
+
+  getOwnPropertyDescriptor(target: ShadowTarget, key: PropertyKey): PropertyDescriptor | undefined {
+    const {
+      originalTarget,
+      membrane: { accessObserver },
+    } = this;
+    accessObserver(originalTarget, key);
+    return getOwnPropertyDescriptor(originalTarget, key);
   }
 }

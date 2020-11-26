@@ -1,7 +1,20 @@
-const { getPrototypeOf, getOwnPropertyNames, getOwnPropertySymbols } = Object;
+const {
+  getPrototypeOf,
+  defineProperty: ObjectDefineProperty,
+  getOwnPropertyDescriptor,
+  getOwnPropertyNames,
+  getOwnPropertySymbols,
+} = Object;
 const { push: ArrayPush } = Array.prototype;
 
-export { getPrototypeOf, getOwnPropertyNames, getOwnPropertySymbols, ArrayPush };
+export {
+  getPrototypeOf,
+  ObjectDefineProperty,
+  getOwnPropertyDescriptor,
+  getOwnPropertyNames,
+  getOwnPropertySymbols,
+  ArrayPush,
+};
 
 export function isUndefined(obj: any): obj is undefined {
   return obj === undefined;
