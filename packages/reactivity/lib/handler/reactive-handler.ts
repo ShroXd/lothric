@@ -64,7 +64,7 @@ export class ReactiveHandler extends BaseHandler {
     return true;
   }
 
-  setPrototypeOf(target: object, prototype: any) {
+  setPrototypeOf(target: object, prototype: any): any {
     if (process.env.NODE_ENV !== 'production') {
       throw new Error(`You can't set new prototype for reactive object: ${this.originalTarget}`);
     }

@@ -1,3 +1,4 @@
+import { ReactiveHandler } from './handler/reactive-handler';
 import {
   AccessObserver,
   MutationObserver,
@@ -31,7 +32,8 @@ export class Reactivity {
       const reactiveState = objGraph.get(distortedValue);
       if (reactiveState) return reactiveState;
 
-      // TODO new proxy
+      const reactiveHandler = new ReactiveHandler(this, distortedValue);
+      return new Proxy(distortedValue, reactiveHandler);
     }
     return distortedValue;
   }

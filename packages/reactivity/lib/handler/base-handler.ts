@@ -6,8 +6,6 @@ import {
   getOwnPropertyNames,
   getOwnPropertySymbols,
   getPrototypeOf,
-  isUndefined,
-  ObjectDefineProperty,
 } from '../utils';
 
 export type ShadowTarget = object;

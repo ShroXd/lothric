@@ -27,6 +27,6 @@
   "include": [
     // "packages/declarations.d.ts",
     "packages/*/lib",
-    "packages/*/__test__"
+    "packages/*/__tests__"
   ]
 }

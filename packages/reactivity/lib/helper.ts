@@ -1,6 +1,6 @@
 export type AccessObserver = (target: any, key?: any) => void;
 export type MutationObserver = (target: any, key?: any) => void;
-export type DistortionHandler = (value: any) => void;
+export type DistortionHandler = (value: any) => any;
 export type IsValueObservable = (value: any) => boolean;
 
 export interface ReactivityOptions {
