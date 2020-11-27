@@ -101,7 +101,7 @@ export class ReactiveHandler extends BaseHandler {
       this.copyDescriptorIntoShadowTarget(target, key);
     }
     mutationObserver(originalTarget, key);
-    return false;
+    return true;
   }
 
   deleteProperty(target: object, key: PropertyKey): boolean {
