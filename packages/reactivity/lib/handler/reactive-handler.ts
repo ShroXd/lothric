@@ -1,5 +1,5 @@
 import { OriginalGetter, OriginalSetter, WrappedGetter, WrappedSetter } from '../helper';
-import { isUndefined } from '../utils';
+import { hasOwnProperty, isUndefined, ObjectDefineProperty } from '../utils';
 import { BaseHandler } from './base-handler';
 
 const getterMap = new WeakMap<OriginalGetter, WrappedGetter>();
@@ -30,12 +30,49 @@ export class ReactiveHandler extends BaseHandler {
     if (!isUndefined(wrappedSetter)) return wrappedSetter;
 
     const set = (self: any, value: any): void => {
-      // TODO 包裹与解包 self value
       originalSet.call(self, value);
     };
     setterMap.set(originalSet, set as WrappedSetter);
     revertSetterMap.set(set as WrappedSetter, originalSet);
     return set as WrappedSetter;
+  }
+
+  unwrapDescriptor(descriptor: PropertyDescriptor): PropertyDescriptor {
+    /* Handle getter & setter of value */
+    if (!hasOwnProperty.call(descriptor, 'value')) {
+      const { set: originalSet, get: originalGet } = descriptor;
+      if (!isUndefined(originalGet)) descriptor.get = this.unwrapGetter(originalGet);
+      if (!isUndefined(originalSet)) descriptor.set = this.unwrapSetter(originalSet);
+    }
+
+    return descriptor;
+  }
+
+  unwrapGetter(g: WrappedGetter): OriginalGetter {
+    const revertGetter = revertGetterMap.get(g);
+    if (!isUndefined(revertGetter)) return revertGetter;
+
+    const handler = this;
+    const get = (self: any): any => {
+      return g.call(handler.transmitValueWrap(self));
+    };
+    getterMap.set(get as OriginalGetter, g);
+    revertGetterMap.set(g, get as OriginalGetter);
+    return get as OriginalGetter;
+  }
+
+  unwrapSetter(s: WrappedSetter): OriginalSetter {
+    const revertSetter = revertSetterMap.get(s);
+    if (!isUndefined(revertSetter)) return revertSetter;
+
+    const handler = this;
+    const set = (self: any, value: any) => {
+      s.call(handler.transmitValueWrap(self), handler.transmitValueWrap(value));
+    };
+    setterMap.set(set as OriginalSetter, s);
+    revertSetterMap.set(s, set as OriginalSetter);
+
+    return set as OriginalSetter;
   }
 
   set(target: object, key: PropertyKey, value: any): boolean {
@@ -52,8 +89,21 @@ export class ReactiveHandler extends BaseHandler {
   }
 
   defineProperty(target: object, key: PropertyKey, descriptor: PropertyDescriptor): boolean {
-    throw new Error('Method not implemented.');
+    const {
+      originalTarget,
+      membrane: { identification, mutationObserver },
+    } = this;
+
+    /* Protect our identification */
+    if (key === identification && !hasOwnProperty.call(originalTarget, key)) return true;
+    ObjectDefineProperty(originalTarget, key, this.unwrapDescriptor(descriptor));
+    if (descriptor.configurable === false) {
+      this.copyDescriptorIntoShadowTarget(target, key);
+    }
+    mutationObserver(originalTarget, key);
+    return false;
   }
+
   deleteProperty(target: object, key: PropertyKey): boolean {
     const {
       originalTarget,
@@ -69,7 +119,11 @@ export class ReactiveHandler extends BaseHandler {
       throw new Error(`You can't set new prototype for reactive object: ${this.originalTarget}`);
     }
   }
+
   preventExtensions(target: object): boolean {
-    throw new Error('Method not implemented.');
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error('Method not implemented.');
+    }
+    return false;
   }
 }
