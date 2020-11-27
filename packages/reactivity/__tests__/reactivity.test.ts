@@ -23,6 +23,7 @@ describe('@lothric/reactivity/reactivity.ts', () => {
         fn();
       },
     });
+
     const wet = membrane.reactive(raw);
     wet.a;
     expect(fn).toHaveBeenCalledTimes(1);
@@ -36,6 +37,7 @@ describe('@lothric/reactivity/reactivity.ts', () => {
         fn();
       },
     });
+
     const wet = membrane.reactive(raw);
     wet.a;
     expect(fn).not.toHaveBeenCalled();
@@ -50,6 +52,7 @@ describe('@lothric/reactivity/reactivity.ts', () => {
         return 'distorted value';
       },
     });
+
     const wet = membrane.reactive(raw);
     expect(wet).toBe('distorted value');
   });
@@ -61,8 +64,57 @@ describe('@lothric/reactivity/reactivity.ts', () => {
         return false;
       },
     });
+
     const wet = membrane.reactive(raw);
     wet.x = 'new value';
     expect(wet).toStrictEqual(raw);
+  });
+
+  it('should support identification as string', () => {
+    const raw = { a: 1 };
+    const membrane = new Reactivity({
+      identification: 'iden',
+    });
+
+    const wet = membrane.reactive(raw);
+    expect('iden' in raw).toBe(false);
+    expect('iden' in wet).toBe(true);
+    expect(wet.iden).toBe(undefined);
+
+    const names = Object.getOwnPropertyNames(wet);
+    expect(names.length).toBe(1);
+    expect(names[0]).toBe('iden');
+  });
+
+  it('should support identification as symbol', () => {
+    const raw = { a: 1 };
+    const iden = Symbol();
+    const membrane = new Reactivity({
+      identification: iden,
+    });
+
+    const wet = membrane.reactive(raw);
+    expect(iden in raw).toBe(false);
+    expect(iden in wet).toBe(true);
+    expect(wet.iden).toBe(undefined);
+
+    const names = Object.getOwnPropertySymbols(wet);
+    expect(names.length).toBe(1);
+    expect(names[0]).toBe(iden);
+  });
+
+  it('should trigger observer when access identification', () => {
+    const raw = { a: 1 };
+    const fn = jest.fn();
+    const membrane = new Reactivity({
+      identification: 'iden',
+      accessObserver() {
+        fn();
+      },
+    });
+
+    const wet = membrane.reactive(raw);
+    wet.iden;
+    expect(fn).toHaveBeenCalledTimes(1);
   });
 });
