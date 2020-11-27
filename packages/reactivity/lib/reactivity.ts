@@ -15,6 +15,7 @@ import { extend, isUndefined } from './utils';
 export class Reactivity {
   private objGraph: WeakMap<any, any> = new WeakMap();
 
+  identification: PropertyKey | undefined;
   accessObserver: AccessObserver = defaultAccessObserver;
   mutationObserver: MutationObserver = defaultMutationObserver;
   distortionHandler: DistortionHandler = defaultDistortionHandler;

@@ -4,6 +4,7 @@ export type DistortionHandler = (value: any) => any;
 export type IsValueObservable = (value: any) => boolean;
 
 export interface ReactivityOptions {
+  identification?: PropertyKey;
   accessObserver?: AccessObserver;
   mutationObserver?: MutationObserver;
   distortionHandler?: DistortionHandler;

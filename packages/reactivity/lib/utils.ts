@@ -4,6 +4,7 @@ const {
   getOwnPropertyDescriptor,
   getOwnPropertyNames,
   getOwnPropertySymbols,
+  hasOwnProperty,
 } = Object;
 const { push: ArrayPush } = Array.prototype;
 
@@ -13,6 +14,7 @@ export {
   getOwnPropertyDescriptor,
   getOwnPropertyNames,
   getOwnPropertySymbols,
+  hasOwnProperty,
   ArrayPush,
 };
 
