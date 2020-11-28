@@ -17,8 +17,8 @@ export class ReactiveHandler extends BaseHandler {
     if (!isUndefined(wrappedGetter)) return wrappedGetter;
 
     const handler = this;
-    const get = (self: any): any => {
-      return handler.transmitValueWrap(originalGet.call(self));
+    const get = function (): any {
+      return handler.transmitValueWrap(originalGet.call(this));
     };
     getterMap.set(originalGet, get as WrappedGetter);
     revertGetterMap.set(get as WrappedGetter, originalGet);
@@ -29,8 +29,9 @@ export class ReactiveHandler extends BaseHandler {
     const wrappedSetter = setterMap.get(originalSet);
     if (!isUndefined(wrappedSetter)) return wrappedSetter;
 
-    const set = (self: any, value: any): void => {
-      originalSet.call(self, value);
+    const set = function (value: any): void {
+      /* this depends on caller*/
+      originalSet.call(this, value);
     };
     setterMap.set(originalSet, set as WrappedSetter);
     revertSetterMap.set(set as WrappedSetter, originalSet);
