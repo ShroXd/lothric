@@ -105,6 +105,76 @@ describe('@lothric/reactivity/reactive-handler.ts (handler)', () => {
     expect(wet.b).toBe(2);
   });
 
+  it('should assign same property with value on original object', () => {
+    const raw = { a: 1 };
+    const membrane = new Reactivity();
+
+    const wet = membrane.reactive(raw);
+    Object.defineProperty(wet, 'b', { value: 2 });
+  });
+
+  it('should handle Object.defineProperty correctly with undefined non-configurable descriptor', () => {
+    const raw = { a: 1 };
+    const membrane = new Reactivity();
+
+    const wet = membrane.reactive(raw);
+    Object.defineProperty(wet, 'b', {
+      value: undefined,
+      configurable: false,
+    });
+    expect(wet.b).toBe(undefined);
+    expect(() => {
+      wet.b = 2;
+    }).toThrowError();
+  });
+
+  it('should handle Object.defineProperty correctly with non-configurable descriptor', () => {
+    const raw = { a: 1 };
+    const membrane = new Reactivity();
+
+    const wet = membrane.reactive(raw);
+    Object.defineProperty(wet, 'b', {
+      value: 2,
+      configurable: false,
+    });
+    expect(wet.b).toBe(2);
+    expect(() => {
+      wet.b = 3;
+    }).toThrowError();
+  });
+
+  it('should not allow deleting non-configurable property', () => {
+    const raw = { a: 1 };
+    const membrane = new Reactivity();
+
+    const wet = membrane.reactive(raw);
+    Object.defineProperty(wet, 'b', {
+      value: 2,
+      configurable: false,
+    });
+
+    expect(() => {
+      delete wet.b;
+    }).toThrowError();
+  });
+
+  it('should not allow re-defining non-configurable property', () => {
+    const raw = { a: 1 };
+    const membrane = new Reactivity();
+
+    const wet = membrane.reactive(raw);
+    Object.defineProperty(wet, 'b', {
+      value: 2,
+      configurable: false,
+    });
+    expect(() => {
+      Object.defineProperty(wet, 'b', {
+        value: 3,
+        configurable: true,
+      });
+    }).toThrowError();
+  });
+
   it('shoud handle Object.isExtensible correctly', () => {
     const raw = { a: 1 };
     const membrane = new Reactivity();
@@ -125,6 +195,17 @@ describe('@lothric/reactivity/reactive-handler.ts (handler)', () => {
       wet.b = 2;
     }).toThrow();
     expect(wet.a).toBe(1);
+  });
+
+  it('should throw error when user invoke Object.setPrototypeOf', () => {
+    const raw = { a: 1 };
+    const newProto = { b: 2 };
+    const membrane = new Reactivity();
+
+    const wet = membrane.reactive(raw);
+    expect(() => {
+      Object.setPrototypeOf(wet, newProto);
+    }).toThrowError();
   });
 
   it('should handle Object.getOwnPropertyNames correctly', () => {
