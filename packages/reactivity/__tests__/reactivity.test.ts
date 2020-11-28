@@ -82,7 +82,7 @@ describe('@lothric/reactivity/reactivity.ts', () => {
     expect(wet.iden).toBe(undefined);
 
     const names = Object.getOwnPropertyNames(wet);
-    expect(names.length).toBe(1);
+    expect(names.length).toBe(2);
     expect(names[0]).toBe('iden');
   });
 
