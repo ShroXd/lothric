@@ -10,7 +10,7 @@ import {
   defaultIsValueObservable,
   IsValueObservable,
 } from './helper';
-import { extend, isUndefined } from './utils';
+import { extend, isUndefined, registerProxy, unwrapValue } from './utils';
 
 export class Reactivity {
   private objGraph: WeakMap<any, any> = new WeakMap();
@@ -27,14 +27,17 @@ export class Reactivity {
   }
 
   reactive(value: any) {
-    const distortedValue = this.distortionHandler(value);
+    const unwrappedValue = unwrapValue(value);
+    const distortedValue = this.distortionHandler(unwrappedValue);
     if (this.isValueObservable(distortedValue)) {
       const { objGraph } = this;
       const reactiveState = objGraph.get(distortedValue);
       if (reactiveState) return reactiveState;
 
       const reactiveHandler = new ReactiveHandler(this, distortedValue);
-      return new Proxy(distortedValue, reactiveHandler);
+      const proxy = new Proxy(distortedValue, reactiveHandler);
+      registerProxy(proxy, unwrappedValue);
+      return proxy;
     }
     return distortedValue;
   }

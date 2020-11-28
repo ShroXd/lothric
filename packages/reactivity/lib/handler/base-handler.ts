@@ -1,6 +1,7 @@
 import { OriginalGetter, OriginalSetter, WrappedGetter, WrappedSetter } from '../helper';
 import { Reactivity } from '../reactivity';
 import {
+  ArrayConcat,
   ArrayPush,
   getOwnPropertyDescriptor,
   getOwnPropertyNames,
@@ -8,7 +9,9 @@ import {
   getPrototypeOf,
   hasOwnProperty,
   isUndefined,
+  ObjectCreate,
   ObjectDefineProperty,
+  preventExtensions,
 } from '../utils';
 
 export type ShadowTarget = object;
@@ -68,8 +71,8 @@ export abstract class BaseHandler {
     } = this;
     const keys: PropertyKey[] =
       isUndefined(identification) || hasOwnProperty.call(originalTarget, identification) ? [] : [identification];
-    ArrayPush(keys, getOwnPropertyNames(originalTarget));
-    ArrayPush(keys, getOwnPropertySymbols(originalTarget));
+    ArrayPush.apply(keys, getOwnPropertyNames(originalTarget));
+    ArrayPush.apply(keys, getOwnPropertySymbols(originalTarget));
     return keys;
   }
 
@@ -130,5 +133,24 @@ export abstract class BaseHandler {
       const wrappedDescriptor = this.wrapDescriptor(originalDescriptor);
       ObjectDefineProperty(target, key, wrappedDescriptor);
     }
+  }
+
+  preventShadowTargetExtensions(target: ShadowTarget): void {
+    const { originalTarget } = this;
+    const originalTargetKeys: PropertyKey[] = ArrayConcat.call(
+      getOwnPropertyNames(originalTarget),
+      getOwnPropertySymbols(originalTarget),
+    );
+    originalTargetKeys.forEach((key) => {
+      this.copyDescriptorIntoShadowTarget(target, key);
+    });
+    const {
+      membrane: { identification },
+    } = this;
+    /* Check identification have not be defined on original target and shadow target */
+    if (!isUndefined(identification) && !hasOwnProperty.call(target, identification)) {
+      ObjectDefineProperty(target, identification, ObjectCreate(null));
+    }
+    preventExtensions(target);
   }
 }

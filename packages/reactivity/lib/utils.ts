@@ -1,21 +1,28 @@
 const {
   getPrototypeOf,
+  create: ObjectCreate,
   defineProperty: ObjectDefineProperty,
+  isExtensible,
   getOwnPropertyDescriptor,
   getOwnPropertyNames,
   getOwnPropertySymbols,
+  preventExtensions,
   hasOwnProperty,
 } = Object;
-const { push: ArrayPush } = Array.prototype;
+const { push: ArrayPush, concat: ArrayConcat } = Array.prototype;
 
 export {
   getPrototypeOf,
+  ObjectCreate,
   ObjectDefineProperty,
+  isExtensible,
   getOwnPropertyDescriptor,
   getOwnPropertyNames,
   getOwnPropertySymbols,
+  preventExtensions,
   hasOwnProperty,
   ArrayPush,
+  ArrayConcat,
 };
 
 export function isUndefined(obj: any): obj is undefined {
@@ -28,3 +35,16 @@ export const extend = <T extends object, U extends object>(a: T, b: U): T & U =>
   }
   return a as any;
 };
+
+/* Mark proxy with value */
+type ReactiveProxy = object;
+type MaybeProxy = any;
+const proxyMap: WeakMap<ReactiveProxy, any> = new WeakMap();
+
+export function registerProxy(proxy: ReactiveProxy, value: any) {
+  proxyMap.set(proxy, value);
+}
+
+export function unwrapValue(original: MaybeProxy) {
+  return proxyMap.get(original) || original;
+}

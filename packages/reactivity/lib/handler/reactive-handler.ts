@@ -1,5 +1,5 @@
 import { OriginalGetter, OriginalSetter, WrappedGetter, WrappedSetter } from '../helper';
-import { hasOwnProperty, isUndefined, ObjectDefineProperty } from '../utils';
+import { hasOwnProperty, isExtensible, isUndefined, ObjectDefineProperty, preventExtensions } from '../utils';
 import { BaseHandler } from './base-handler';
 
 const getterMap = new WeakMap<OriginalGetter, WrappedGetter>();
@@ -121,9 +121,11 @@ export class ReactiveHandler extends BaseHandler {
   }
 
   preventExtensions(target: object): boolean {
-    if (process.env.NODE_ENV !== 'production') {
-      throw new Error('Method not implemented.');
+    if (isExtensible(target)) {
+      const { originalTarget } = this;
+      preventExtensions(originalTarget);
+      this.preventShadowTargetExtensions(target);
     }
-    return false;
+    return true;
   }
 }
