@@ -287,6 +287,66 @@ describe('@lothric/reactivity/reactive-handler.ts (handler)', () => {
     const wet = membrane.reactive(raw);
     expect(Object.keys(wet)).toStrictEqual(['a']);
   });
+
+  it('should return reactive proxy when access property value via data descriptor', () => {
+    const raw1 = { a: 1 };
+    const raw2 = { b: 2 };
+    const membrane = new Reactivity();
+
+    Object.defineProperty(raw1, 'raw2', {
+      value: raw2,
+      configurable: true,
+    });
+    const reactiveRaw1 = membrane.reactive(raw1);
+    const reactiveRaw2 = membrane.reactive(raw2);
+    expect(reactiveRaw1.raw2).toStrictEqual(reactiveRaw2);
+
+    const descriptor = Object.getOwnPropertyDescriptor(reactiveRaw1, 'raw2');
+    expect(descriptor!.value!).toStrictEqual(reactiveRaw2);
+  });
+
+  it('should return reactive proxy when access property value via accessor descriptor', () => {
+    const raw1 = { a: 1 };
+    const raw2 = { b: 2 };
+    const membrane = new Reactivity();
+
+    Object.defineProperty(raw1, 'raw2', {
+      get() {
+        return raw2;
+      },
+      configurable: true,
+    });
+    const reactiveRaw1 = membrane.reactive(raw1);
+    const reactiveRaw2 = membrane.reactive(raw2);
+    expect(reactiveRaw1.raw2).toStrictEqual(reactiveRaw2);
+
+    const descriptor = Object.getOwnPropertyDescriptor(reactiveRaw1, 'raw2');
+    expect(descriptor!.get!()).toStrictEqual(reactiveRaw2);
+  });
+
+  it('should allow user set invocation via descriptor', () => {
+    const raw = { a: 1 };
+    const membrane = new Reactivity();
+    let num = 2;
+    const newNum = 3;
+
+    Object.defineProperty(raw, 'num', {
+      get() {
+        return num;
+      },
+      set(v) {
+        num = v;
+      },
+      configurable: true,
+    });
+    const wet = membrane.reactive(raw);
+    const descriptor = Object.getOwnPropertyDescriptor(wet, 'num');
+    const set = descriptor!.set!;
+    const get = descriptor!.get!;
+    set.call(wet, newNum);
+    expect((raw as any).num).toEqual(newNum);
+    expect(wet.num).toEqual(get.call(wet));
+  });
 });
 
 describe('@lothric/reactivity/reactive-handler.ts (Array)', () => {
