@@ -347,6 +347,29 @@ describe('@lothric/reactivity/reactive-handler.ts (handler)', () => {
     expect((raw as any).num).toEqual(newNum);
     expect(wet.num).toEqual(get.call(wet));
   });
+
+  it('should allow user handle property value via descriptor which only have getter/setter', () => {
+    const raw = { a: 1 };
+    let num = 2;
+    const membrane = new Reactivity();
+
+    const wet = membrane.reactive(raw);
+    Object.defineProperty(wet, 'b', {
+      get() {
+        return num;
+      },
+      set(v: number) {
+        num = v;
+      },
+      configurable: true,
+    });
+    const descriptor = Object.getOwnPropertyDescriptor(raw, 'b');
+    const set = descriptor!.set!;
+    const get = descriptor!.get!;
+    expect(get.call(wet)).toEqual(2);
+    set.call(wet, 3);
+    expect(get.call(wet)).toEqual(3);
+  });
 });
 
 describe('@lothric/reactivity/reactive-handler.ts (Array)', () => {

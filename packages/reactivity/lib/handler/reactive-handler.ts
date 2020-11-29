@@ -1,5 +1,12 @@
 import { OriginalGetter, OriginalSetter, WrappedGetter, WrappedSetter } from '../helper';
-import { hasOwnProperty, isExtensible, isUndefined, ObjectDefineProperty, preventExtensions } from '../utils';
+import {
+  hasOwnProperty,
+  isExtensible,
+  isUndefined,
+  ObjectDefineProperty,
+  preventExtensions,
+  unwrapValue,
+} from '../utils';
 import { BaseHandler } from './base-handler';
 
 const getterMap = new WeakMap<OriginalGetter, WrappedGetter>();
@@ -40,7 +47,9 @@ export class ReactiveHandler extends BaseHandler {
 
   unwrapDescriptor(descriptor: PropertyDescriptor): PropertyDescriptor {
     /* Handle getter & setter of value */
-    if (!hasOwnProperty.call(descriptor, 'value')) {
+    if (hasOwnProperty.call(descriptor, 'value')) {
+      descriptor.value = unwrapValue(descriptor.value);
+    } else {
       const { set: originalSet, get: originalGet } = descriptor;
       if (!isUndefined(originalGet)) descriptor.get = this.unwrapGetter(originalGet);
       if (!isUndefined(originalSet)) descriptor.set = this.unwrapSetter(originalSet);
@@ -54,8 +63,8 @@ export class ReactiveHandler extends BaseHandler {
     if (!isUndefined(revertGetter)) return revertGetter;
 
     const handler = this;
-    const get = (self: any): any => {
-      return g.call(handler.transmitValueWrap(self));
+    const get = function (): any {
+      return g.call(handler.transmitValueWrap(this));
     };
     getterMap.set(get as OriginalGetter, g);
     revertGetterMap.set(g, get as OriginalGetter);
@@ -67,8 +76,8 @@ export class ReactiveHandler extends BaseHandler {
     if (!isUndefined(revertSetter)) return revertSetter;
 
     const handler = this;
-    const set = (self: any, value: any) => {
-      s.call(handler.transmitValueWrap(self), handler.transmitValueWrap(value));
+    const set = function (value: any): void {
+      s.call(handler.transmitValueWrap(this), handler.transmitValueWrap(value));
     };
     setterMap.set(set as OriginalSetter, s);
     revertSetterMap.set(s, set as OriginalSetter);
