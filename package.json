@@ -37,7 +37,6 @@
   "lint-staged": {
     "*.ts": [
       "npm run lint",
-      "npm run test",
       "git add"
     ]
   },
