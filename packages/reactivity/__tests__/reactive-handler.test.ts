@@ -364,9 +364,180 @@ describe('@lothric/reactivity/reactive-handler.ts (Array)', () => {
 
   it('should wrap Array correctly', () => {
     const raw: any[] = [];
+
     const wet = defaultMembrane.reactive(raw);
     expect(wet).not.toBe(raw);
   });
 
-  it('shoud allow access item in array', () => {});
+  it('shoud allow access item in array', () => {
+    const raw = [1, 2];
+
+    const wet = defaultMembrane.reactive(raw);
+    expect(Array.isArray(wet)).toBe(true);
+    expect(wet.length).toBe(2);
+    expect(wet[0]).toBe(1);
+    expect(wet[1]).toBe(2);
+  });
+
+  it('should allow check index in array', () => {
+    const raw = [1, 2];
+
+    const wet = defaultMembrane.reactive(raw);
+    expect(0 in wet).toBe(true);
+  });
+
+  it('should allow delete item in array', () => {
+    const raw = [1, 2];
+
+    const wet = defaultMembrane.reactive(raw);
+    delete wet[0];
+    expect(wet[0]).toBeUndefined();
+    expect(raw[0]).toBeUndefined();
+  });
+
+  it('should handle Object.keys function correctly', () => {
+    const raw = [1];
+
+    const wet = defaultMembrane.reactive(raw);
+    expect(Object.keys(wet)).toStrictEqual(['0']);
+  });
+
+  it('should allow change item in array', () => {
+    const raw = [1, 2];
+
+    const wet = defaultMembrane.reactive(raw);
+    expect(Array.isArray(wet)).toBe(true);
+    expect(() => {
+      raw[0] = 3;
+    }).not.toThrowError();
+    expect(raw[0]).toBe(3);
+  });
+
+  it('should allow access length descriptor', () => {
+    const raw = [1];
+
+    const wet = defaultMembrane.reactive(raw);
+    expect(Array.isArray(wet)).toBe(true);
+    expect(Object.getOwnPropertyDescriptor(wet, 'length')!.value).toBe(1);
+    wet.length = 2;
+    expect(Object.getOwnPropertyDescriptor(wet, 'length')!.value).toBe(2);
+    wet[2] = 3;
+    expect(Object.getOwnPropertyDescriptor(wet, 'length')!.value).toBe(3);
+    expect(wet[2]).toBe(3);
+  });
+
+  it('should trigger observer when values accessed', () => {
+    const raw = [1, 2];
+    const accessObs = jest.fn();
+    const membrane = new Reactivity({
+      accessObserver: accessObs,
+    });
+
+    const wet = membrane.reactive(raw);
+    wet[0];
+    wet[1];
+    expect(accessObs).toHaveBeenCalledTimes(2);
+    expect(accessObs).toHaveBeenCalledWith(wet, '0');
+    expect(accessObs).toHaveBeenCalledWith(wet, '1');
+  });
+
+  it('should trigger observer when values mutated', () => {
+    const raw = [1, 2];
+    const mutationObs = jest.fn();
+    const membrane = new Reactivity({
+      mutationObserver: mutationObs,
+    });
+
+    const wet = membrane.reactive(raw);
+    wet[0] = '3';
+    wet[1] = '4';
+    expect(mutationObs).toHaveBeenCalledTimes(2);
+    expect(mutationObs).toHaveBeenCalledWith(wet, '0');
+    expect(mutationObs).toHaveBeenCalledWith(wet, '1');
+    expect(wet[0]).toBe('3');
+    expect(wet[1]).toBe('4');
+  });
+
+  it('should handle Array.indexOf function correctly', () => {
+    const raw = ['Spike', 'Jet', 'Faye', 'Edward'];
+    const accessObs = jest.fn();
+    const mutationObs = jest.fn();
+    const membrane = new Reactivity({
+      accessObserver: accessObs,
+      mutationObserver: mutationObs,
+    });
+
+    const wet = membrane.reactive(raw);
+    expect(wet.indexOf('Faye')).toBe(2);
+    expect(wet.includes('Edward')).toBe(true);
+    expect(wet.includes('Ein')).toBe(false);
+    expect(wet.lastIndexOf('Jet')).toBe(1);
+    expect(wet.lastIndexOf('Ein', 1)).toBe(-1);
+    expect(mutationObs).toHaveBeenCalledTimes(0);
+  });
+
+  describe('Handle Array.prototype function', () => {
+    let accessObs: jest.Mock<any, any>;
+    let mutationObs: jest.Mock<any, any>;
+    let defaultMembrane: Reactivity;
+    beforeEach(() => {
+      accessObs = jest.fn();
+      mutationObs = jest.fn();
+      defaultMembrane = new Reactivity({
+        accessObserver: accessObs,
+        mutationObserver: mutationObs,
+      });
+    });
+
+    it('should hanlde Array.push function correctly', () => {
+      const raw: any[] = [];
+
+      const wet = defaultMembrane.reactive(raw);
+      expect(() => {
+        wet.push(1);
+      }).not.toThrowError();
+      expect(accessObs).toHaveBeenCalledTimes(2);
+      expect(wet[0]).toEqual(1);
+      expect(Object.getOwnPropertyDescriptor(wet, 'length')!.value).toEqual(1);
+      expect(accessObs).toHaveBeenCalledWith(wet, '0');
+      expect(accessObs).toHaveBeenCalledWith(wet, 'length');
+      expect(mutationObs).toHaveBeenCalledWith(wet, '0');
+      expect(mutationObs).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle Array.pop function correctly', () => {
+      const raw = [1, 2];
+
+      const wet = defaultMembrane.reactive(raw);
+      expect(wet.pop()).toEqual(2);
+      expect(mutationObs).toHaveBeenCalledTimes(2);
+      expect(mutationObs).toHaveBeenCalledWith(wet, 'length');
+      expect(mutationObs).toHaveBeenCalledWith(wet, '1');
+    });
+
+    it('should handle Array.unshift function correctly', () => {
+      const raw = [1, 2];
+
+      const wet = defaultMembrane.reactive(raw);
+      expect(() => {
+        wet.unshift(3);
+      }).not.toThrowError();
+      expect(wet[0]).toEqual(3);
+      expect(Object.getOwnPropertyDescriptor(wet, 'length')!.value).toEqual(3);
+      // so this is a fucking thing.
+      expect(mutationObs).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle Array.shift function correctly', () => {
+      const raw = [1, 2];
+
+      const wet = defaultMembrane.reactive(raw);
+      expect(() => {
+        wet.shift();
+      }).not.toThrowError();
+      expect(wet[0]).toEqual(2);
+      expect(Object.getOwnPropertyDescriptor(wet, 'length')!.value).toEqual(1);
+      expect(mutationObs).toHaveBeenCalledTimes(3);
+    });
+  });
 });
