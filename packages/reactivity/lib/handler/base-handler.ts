@@ -51,7 +51,7 @@ export abstract class BaseHandler {
       membrane: { accessObserver },
     } = this;
     const value = originalTarget[key];
-    accessObserver(value);
+    accessObserver(originalTarget, key);
     return this.transmitValueWrap(value);
   }
 
@@ -94,6 +94,7 @@ export abstract class BaseHandler {
     let descriptor = getOwnPropertyDescriptor(originalTarget, key);
 
     /* handle identification */
+    // TODO 应当处理当 desc 不等的情况
     if (isUndefined(descriptor)) {
       if (key !== identification) return undefined;
 
