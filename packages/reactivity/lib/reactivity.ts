@@ -1,4 +1,5 @@
 import { ReactiveHandler } from './handler/reactive-handler';
+import { ReadOnlyHandler } from './handler/read-only-handler';
 import {
   AccessObserver,
   MutationObserver,
@@ -43,9 +44,17 @@ export class Reactivity {
   }
 
   readonly(value: any) {
-    const distortedValue = this.distortionHandler(value);
+    const unwrappedValue = unwrapValue(value);
+    const distortedValue = this.distortionHandler(unwrappedValue);
     if (this.isValueObservable(distortedValue)) {
-      // TODO return new proxy
+      const { objGraph } = this;
+      const readonlyState = objGraph.get(distortedValue);
+      if (readonlyState) return readonlyState;
+
+      const readonlyHandler = new ReadOnlyHandler(this, distortedValue);
+      const proxy = new Proxy(distortedValue, readonlyHandler);
+      registerProxy(proxy, unwrappedValue);
+      return proxy;
     }
     return distortedValue;
   }
