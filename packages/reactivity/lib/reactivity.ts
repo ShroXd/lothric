@@ -31,33 +31,35 @@ export class Reactivity {
   reactive(value: any) {
     const unwrappedValue = unwrapValue(value);
     const distortedValue = this.distortionHandler(unwrappedValue);
-    if (this.isValueObservable(distortedValue)) {
-      const { objGraph } = this;
-      const reactiveState = objGraph.get(distortedValue);
-      if (reactiveState) return reactiveState;
-
-      const reactiveHandler = new ReactiveHandler(this, distortedValue);
-      const proxy = new Proxy(distortedValue, reactiveHandler);
-      registerProxy(proxy, unwrappedValue);
-      return proxy;
+    if (!this.isValueObservable(distortedValue)) {
+      return distortedValue;
     }
-    return distortedValue;
+
+    const { objGraph } = this;
+    const reactiveState = objGraph.get(distortedValue);
+    if (reactiveState) return reactiveState;
+
+    const reactiveHandler = new ReactiveHandler(this, distortedValue);
+    const proxy = new Proxy(distortedValue, reactiveHandler);
+    registerProxy(proxy, unwrappedValue);
+    return proxy;
   }
 
   readonly(value: any) {
     const unwrappedValue = unwrapValue(value);
     const distortedValue = this.distortionHandler(unwrappedValue);
-    if (this.isValueObservable(distortedValue)) {
-      const { objGraph } = this;
-      const readonlyState = objGraph.get(distortedValue);
-      if (readonlyState) return readonlyState;
-
-      const readonlyHandler = new ReadOnlyHandler(this, distortedValue);
-      const proxy = new Proxy(distortedValue, readonlyHandler);
-      registerProxy(proxy, unwrappedValue);
-      return proxy;
+    if (!this.isValueObservable(distortedValue)) {
+      return distortedValue;
     }
-    return distortedValue;
+
+    const { objGraph } = this;
+    const readonlyState = objGraph.get(distortedValue);
+    if (readonlyState) return readonlyState;
+
+    const readonlyHandler = new ReadOnlyHandler(this, distortedValue);
+    const proxy = new Proxy(distortedValue, readonlyHandler);
+    registerProxy(proxy, unwrappedValue);
+    return proxy;
   }
 
   ref(value: any) {
