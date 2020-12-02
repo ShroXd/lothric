@@ -6,7 +6,7 @@ describe('@lothric/reactivity/reactive-handler.ts (base test case)', () => {
     defaultMembrane = new Reactivity();
   });
 
-  it('should idempotent', () => {
+  it('should be idempotent', () => {
     const raw = { a: 1 };
 
     const wet1 = defaultMembrane.reactive(raw);
