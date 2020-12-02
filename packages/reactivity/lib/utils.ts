@@ -1,3 +1,5 @@
+import { Ref } from './helper';
+
 const {
   getPrototypeOf,
   create: ObjectCreate,
@@ -27,6 +29,10 @@ export {
 
 export function isUndefined(obj: any): obj is undefined {
   return obj === undefined;
+}
+
+export function isRef(value: any): value is Ref {
+  return Boolean(value && value._isRef === true);
 }
 
 export const extend = <T extends object, U extends object>(a: T, b: U): T & U => {

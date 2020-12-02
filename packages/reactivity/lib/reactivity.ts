@@ -1,5 +1,6 @@
 import { ReactiveHandler } from './handler/reactive-handler';
 import { ReadOnlyHandler } from './handler/read-only-handler';
+import { RefHandler } from './handler/ref-handler';
 import {
   AccessObserver,
   MutationObserver,
@@ -11,7 +12,7 @@ import {
   defaultIsValueObservable,
   IsValueObservable,
 } from './helper';
-import { extend, isUndefined, registerProxy, unwrapValue } from './utils';
+import { extend, isRef, isUndefined, registerProxy, unwrapValue } from './utils';
 
 export class Reactivity {
   private objGraph: WeakMap<any, any> = new WeakMap();
@@ -60,7 +61,15 @@ export class Reactivity {
   }
 
   ref(value: any) {
-    // TODO
+    const unwrappedValue = unwrapValue(value);
+    const distortedValue = this.distortionHandler(unwrappedValue);
+    if (isRef(distortedValue)) {
+      return distortedValue;
+    }
+
+    const ref = new RefHandler(this, distortedValue);
+    registerProxy(ref, unwrapValue);
+    return ref;
   }
 
   shallowReactive(value: any) {

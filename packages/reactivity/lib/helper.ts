@@ -11,6 +11,10 @@ export interface ReactivityOptions {
   isValueObservable?: IsValueObservable;
 }
 
+export interface Ref<T = any> {
+  value: T;
+}
+
 export const defaultAccessObserver: AccessObserver = (target: any, key?: any) => {
   // do nothing
 };
