@@ -68,7 +68,7 @@ export class Reactivity {
     }
 
     const ref = new RefHandler(this, distortedValue);
-    registerProxy(ref, unwrapValue);
+    registerProxy(ref, distortedValue);
     return ref;
   }
 
