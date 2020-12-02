@@ -37,21 +37,21 @@ export class ReadOnlyHandler extends BaseHandler {
     return set;
   }
 
-  set(target: object, key: string | number | symbol, value: any): boolean {
+  set(target: object, key: PropertyKey, value: any): boolean {
     if (!isProduction()) {
       throw new Error(`You can't set a new value for read only constant: ${this.originalTarget}`);
     }
     return false;
   }
 
-  defineProperty(target: object, key: string | number | symbol, descriptor: PropertyDescriptor): boolean {
+  defineProperty(target: object, key: PropertyKey, descriptor: PropertyDescriptor): boolean {
     if (!isProduction()) {
       throw new Error(`You can't define ${key.toString()} for read only constant: ${this.originalTarget}`);
     }
     return false;
   }
 
-  deleteProperty(target: object, key: string | number | symbol): boolean {
+  deleteProperty(target: object, key: PropertyKey): boolean {
     if (!isProduction()) {
       throw new Error(`You can't delete property ${key.toString()} of read only constant: ${this.originalTarget}`);
     }
