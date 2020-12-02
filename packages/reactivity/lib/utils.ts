@@ -36,6 +36,8 @@ export const extend = <T extends object, U extends object>(a: T, b: U): T & U =>
   return a as any;
 };
 
+export const isProduction = () => process.env.NODE_ENV !== 'production';
+
 /* Mark proxy with value */
 type ReactiveProxy = object;
 type MaybeProxy = any;

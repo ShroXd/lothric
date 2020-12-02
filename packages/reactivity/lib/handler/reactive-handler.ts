@@ -2,6 +2,7 @@ import { OriginalGetter, OriginalSetter, WrappedGetter, WrappedSetter } from '..
 import {
   hasOwnProperty,
   isExtensible,
+  isProduction,
   isUndefined,
   ObjectDefineProperty,
   preventExtensions,
@@ -27,9 +28,9 @@ export class ReactiveHandler extends BaseHandler {
     const get = function (): any {
       return handler.transmitValueWrap(originalGet.call(this));
     };
-    getterMap.set(originalGet, get as WrappedGetter);
-    revertGetterMap.set(get as WrappedGetter, originalGet);
-    return get as WrappedGetter;
+    getterMap.set(originalGet, get);
+    revertGetterMap.set(get, originalGet);
+    return get;
   }
 
   transmitSetterWrap(originalSet: OriginalSetter): WrappedSetter {
@@ -40,9 +41,9 @@ export class ReactiveHandler extends BaseHandler {
       /* this depends on caller*/
       originalSet.call(this, value);
     };
-    setterMap.set(originalSet, set as WrappedSetter);
-    revertSetterMap.set(set as WrappedSetter, originalSet);
-    return set as WrappedSetter;
+    setterMap.set(originalSet, set);
+    revertSetterMap.set(set, originalSet);
+    return set;
   }
 
   unwrapDescriptor(descriptor: PropertyDescriptor): PropertyDescriptor {
@@ -66,9 +67,9 @@ export class ReactiveHandler extends BaseHandler {
     const get = function (): any {
       return g.call(handler.transmitValueWrap(this));
     };
-    getterMap.set(get as OriginalGetter, g);
-    revertGetterMap.set(g, get as OriginalGetter);
-    return get as OriginalGetter;
+    getterMap.set(get, g);
+    revertGetterMap.set(g, get);
+    return get;
   }
 
   unwrapSetter(s: WrappedSetter): OriginalSetter {
@@ -79,10 +80,10 @@ export class ReactiveHandler extends BaseHandler {
     const set = function (value: any): void {
       s.call(handler.transmitValueWrap(this), handler.transmitValueWrap(value));
     };
-    setterMap.set(set as OriginalSetter, s);
-    revertSetterMap.set(s, set as OriginalSetter);
+    setterMap.set(set, s);
+    revertSetterMap.set(s, set);
 
-    return set as OriginalSetter;
+    return set;
   }
 
   set(target: object, key: PropertyKey, value: any): boolean {
@@ -125,7 +126,7 @@ export class ReactiveHandler extends BaseHandler {
   }
 
   setPrototypeOf(target: object, prototype: any): any {
-    if (process.env.NODE_ENV !== 'production') {
+    if (!isProduction()) {
       throw new Error(`You can't set new prototype for reactive object: ${this.originalTarget}`);
     }
   }
