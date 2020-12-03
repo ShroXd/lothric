@@ -35,6 +35,10 @@ export function isRef(value: any): value is Ref {
   return Boolean(value && value._isRef === true);
 }
 
+export function isShallow(value: any): boolean {
+  return Boolean(value && value._isShallow === true);
+}
+
 export const extend = <T extends object, U extends object>(a: T, b: U): T & U => {
   for (const key in b) {
     (a as any)[key] = b[key];
