@@ -1,0 +1,26 @@
+{
+  "name": "@lothric/renderer",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "ShroXd <ShroXdF@gmail.com>",
+  "homepage": "https://github.com/ShroXd/lothric/tree/master/packages/renderer#readme",
+  "license": "MIT",
+  "main": "dist/renderer.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "buildOptions": {
+    "extractDts": true
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShroXd/lothric.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ShroXd/lothric/issues"
+  }
+}
