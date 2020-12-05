@@ -1,5 +1,7 @@
+import { keys } from './utils';
+
 export interface VNode {
-  tag: string | undefined;
+  sel: string | undefined;
   flag: any;
   elm: any | undefined /* Reference of real node */;
   data: VNodeData | undefined;
@@ -26,4 +28,18 @@ export enum VNodeFlags {
   COMPONENT_STATEFUL_NEED_KEEP_ALIVE = 1 << 6,
   COMPONENT_STATEFUL_KEPT_ALIVE = 1 << 7,
   COMPONENT_FUNCTIONAL = 1 << 8,
+}
+
+export const Fragment = Symbol();
+export const Portal = Symbol();
+
+export function vnode(
+  sel: string | undefined,
+  flag: any,
+  elm: any | undefined,
+  data: any | undefined,
+  children: Array<VNode | string> | undefined,
+): VNode {
+  if (keys(data).length === 0) data = undefined;
+  return { sel, flag, elm, data, children };
 }
