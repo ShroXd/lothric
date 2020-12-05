@@ -16,7 +16,8 @@
     "moduleResolution": "node",
     "declaration": true,
     "lib": [
-      "esnext"
+      "esnext",
+      "DOM"
     ],
     "rootDir": ".",
     "paths": {
