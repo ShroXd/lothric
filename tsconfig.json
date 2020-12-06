@@ -15,6 +15,7 @@
     "removeComments": false,
     "moduleResolution": "node",
     "declaration": true,
+    "suppressImplicitAnyIndexErrors": true,
     "lib": [
       "esnext",
       "DOM"
