@@ -11,8 +11,8 @@ export interface VNode {
 export interface VNodeData {
   class?: any;
   style?: any;
-  on?: any;
   props?: any;
+  on?: any;
 }
 
 export enum VNodeFlags {

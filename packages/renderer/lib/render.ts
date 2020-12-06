@@ -1,4 +1,6 @@
+import { DOMAPI } from './domapi';
 import { getRenderPreset } from './renderOptions';
+import { keys } from './utils';
 import { VNode, VNodeFlags } from './vnode';
 
 export function renderer() {
@@ -6,8 +8,23 @@ export function renderer() {
   return createRenderer(options);
 }
 
-function createRenderer(options: any): any {
-  const patch = (prevVNode: VNode, nextVNode: VNode, container: any) => {
+// TODO change options type
+function createRenderer(options: DOMAPI): any {
+  const {
+    // tagName,
+    // setTextContent,
+    // getTextContent,
+    // isElement,
+    // isText,
+    // isComment,
+    // parentNode,
+    // nextSibling,
+    createElement,
+    // createTextNode,
+    // createComment,
+  } = options;
+
+  const patch = (prevVNode: VNode, nextVNode: VNode, container: Element) => {
     const prevFlag = prevVNode.flag;
     const nextFlag = nextVNode.flag;
 
@@ -54,7 +71,34 @@ function createRenderer(options: any): any {
     }
   };
 
-  const mountElement = (vnode: VNode, container: any) => {};
+  const mountElement = (vnode: VNode, container: Element) => {
+    const elm = createElement(vnode.sel);
+    vnode.elm = elm;
+
+    /* handle data */
+    const data = vnode.data;
+    if (data) {
+      keys(data).forEach((key) => {
+        switch (key) {
+          case 'class':
+            elm.className = data[key];
+            break;
+          case 'style':
+            for (let k in data.style) {
+              // elm.setAttribute('style', `${k}: ${data.style[k]}`);
+              elm.style[k] = data.style[k];
+            }
+            break;
+          case 'props':
+          // TODO handle props
+          case 'on':
+          // TODO handle on
+        }
+      });
+    }
+
+    container.appendChild(elm);
+  };
 
   const mountText = (vnode: VNode, container: any) => {};
 
