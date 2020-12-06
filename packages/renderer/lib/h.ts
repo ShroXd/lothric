@@ -1,4 +1,4 @@
-import { isArray } from './utils';
+import { isArray, isString } from './utils';
 import { Fragment, Portal, vnode, VNode, VNodeData, VNodeFlags } from './vnode';
 
 export function h(sel: string | symbol): VNode;
@@ -12,7 +12,7 @@ export function h(sel: any, a?: any, b?: any): VNode {
   if (!!b) {
     if (b && b.sel) {
       children = [b];
-    } else if (isArray(b)) {
+    } else if (isArray(b) || isString(b)) {
       children = b;
     }
     if (!!a) {
@@ -21,7 +21,7 @@ export function h(sel: any, a?: any, b?: any): VNode {
   } else if (!!a) {
     if (a && a.sel) {
       children = [a];
-    } else if (isArray(a)) {
+    } else if (isArray(a) || isString(a)) {
       children = a;
     } else {
       data = a;

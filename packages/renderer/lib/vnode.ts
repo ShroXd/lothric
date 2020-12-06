@@ -5,7 +5,7 @@ export interface VNode {
   flag: any;
   elm: any | undefined /* Reference of real node */;
   data: VNodeData | undefined;
-  children: Array<VNode | string> | undefined /* Reuse properties */;
+  children: Array<VNode | string> | string | undefined /* Reuse properties */;
 }
 
 export interface VNodeData {
