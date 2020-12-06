@@ -33,3 +33,17 @@ describe('@lothric/renderer/render.ts (render element)', () => {
     expect(root.innerHTML).toBe('<span style="font-size: 12px; color: red; background-color: gold;"></span>');
   });
 });
+
+describe('@lothric/renderer/render.ts (render text)', () => {
+  let root: Element;
+  let render: any;
+  beforeEach(() => {
+    root = document.createElement('div');
+    render = renderer();
+  });
+
+  it('should create a text node', () => {
+    render(h('span', 'I am a text'), root);
+    expect(root.innerHTML).toBe('<span>I am a text</span>');
+  });
+});

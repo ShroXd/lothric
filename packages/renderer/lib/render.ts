@@ -1,6 +1,6 @@
 import { DOMAPI } from './domapi';
 import { getRenderPreset } from './renderOptions';
-import { keys } from './utils';
+import { isString, keys } from './utils';
 import { VNode, VNodeFlags } from './vnode';
 
 export function renderer() {
@@ -20,7 +20,7 @@ function createRenderer(options: DOMAPI): any {
     // parentNode,
     // nextSibling,
     createElement,
-    // createTextNode,
+    createTextNode,
     // createComment,
   } = options;
 
@@ -97,10 +97,18 @@ function createRenderer(options: DOMAPI): any {
       });
     }
 
+    // TODO 递归处理子节点
+    if (isString(vnode.children)) {
+      mountText(vnode, elm);
+    }
     container.appendChild(elm);
   };
 
-  const mountText = (vnode: VNode, container: any) => {};
+  const mountText = (vnode: VNode, container: any) => {
+    const elm = createTextNode(vnode.children as string);
+    vnode.elm = elm;
+    container.appendChild(elm);
+  };
 
   const mountFragment = (vnode: VNode, container: any) => {};
 
