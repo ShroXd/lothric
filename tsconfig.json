@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "outDir": "dist",
     "sourceMap": false,
-    "target": "esnext",
+    "target": "ES2019",
     "module": "esnext",
     "allowJs": false,
     "noUnusedLocals": true,
