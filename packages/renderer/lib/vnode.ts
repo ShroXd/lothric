@@ -12,7 +12,7 @@ export interface VNodeData {
   class?: any;
   style?: any;
   props?: any;
-  on?: any;
+  [eventName: string]: any;
 }
 
 export enum VNodeFlags {

@@ -1,6 +1,11 @@
 import { renderer } from '../lib/render';
 import { h } from '../lib/h';
 
+const triggerEvent = (type: string, elm: Element) => {
+  const event = new Event(type);
+  elm.dispatchEvent(event);
+};
+
 describe('@lothric/renderer/render.ts (render element)', () => {
   let root: Element;
   let render: any;
@@ -47,6 +52,20 @@ describe('@lothric/renderer/render.ts (render element)', () => {
       root,
     );
     expect(root.innerHTML).toBe('<input type="checkbox">');
+  });
+
+  it('should create an element with event', () => {
+    const fn = jest.fn();
+    render(h('button', { class: 'myBtn', onClick: fn }), root);
+    triggerEvent('click', root.querySelector('.myBtn')!);
+    expect(fn).toHaveBeenCalled();
+  });
+
+  it('should allow all lower case event name', () => {
+    const fn = jest.fn();
+    render(h('button', { class: 'myBtn', onclick: fn }), root);
+    triggerEvent('click', root.querySelector('.myBtn')!);
+    expect(fn).toHaveBeenCalled();
   });
 });
 

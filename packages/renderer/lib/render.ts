@@ -93,7 +93,9 @@ function createRenderer(options: any): any {
             }
             break;
           default:
-            if (domProp.test(key)) {
+            if (key[0] === 'o' && key[1] === 'n') {
+              elm.addEventListener(key.slice(2).toLocaleLowerCase(), data[key]);
+            } else if (domProp.test(key)) {
               elm[key] = data[key];
             } else {
               elm.setAttribute(key, data[key]);
