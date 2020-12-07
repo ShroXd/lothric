@@ -122,3 +122,20 @@ describe('@lothric/renderer/render.ts (render fragment)', () => {
     expect(root.innerHTML).toBe('<span></span><span></span><div class="root"></div>');
   });
 });
+
+describe('@lothric/renderer/render.ts (patch & unmount)', () => {
+  let root: Element;
+  let render: any;
+  beforeEach(() => {
+    root = document.createElement('div');
+    render = renderer();
+  });
+
+  it('should unmount vnode correctly', () => {
+    render(h('span'), root);
+    expect(root.innerHTML).toBe('<span></span>');
+    render(null, root);
+    expect(root.innerHTML).toBe('');
+    expect((root as any).vnode).toBeNull();
+  });
+});

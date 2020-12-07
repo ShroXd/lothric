@@ -17,6 +17,7 @@ function createRenderer(options: RenderOptions): any {
     // isComment,
     // parentNode,
     // nextSibling,
+    removeChild,
     createElement,
     createTextNode,
     // createComment,
@@ -171,11 +172,14 @@ function createRenderer(options: RenderOptions): any {
 
   const mountFunctionalComponent = (vnode: VNode, container: any) => {};
 
-  const unmount = (container: any) => {};
+  const unmount = (vnode: VNode, container: any) => {
+    removeChild(vnode, container);
+    container.vnode = null;
+  };
 
   const render = (vnode: VNode, container: any) => {
-    const preVNode = container.vnode;
-    if (preVNode == null) {
+    const prevVNode = container.vnode;
+    if (prevVNode == null) {
       if (vnode) {
         mount(vnode, container);
         /* Update vnode on container */
@@ -183,10 +187,10 @@ function createRenderer(options: RenderOptions): any {
       }
     } else {
       if (vnode) {
-        patch(preVNode, vnode, container);
+        patch(prevVNode, vnode, container);
         container.vnode = vnode;
       } else {
-        unmount(container);
+        unmount(prevVNode, container);
         container.vnode = null;
       }
     }

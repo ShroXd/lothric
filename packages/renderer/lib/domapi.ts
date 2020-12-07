@@ -1,3 +1,5 @@
+import { VNode } from './vnode';
+
 export interface DOMAPI {
   tagName: (elm: Element) => string;
   setTextContent: (node: Node, text: string | null) => void;
@@ -7,6 +9,7 @@ export interface DOMAPI {
   isComment: (node: Node) => node is Comment;
   parentNode: (node: Node) => Node | null;
   nextSibling: (node: Node) => Node | null;
+  removeChild: (prevVNode: VNode, node: Node) => void;
   createElement: (tagName: any) => HTMLElement;
   createTextNode: (text: string) => Text;
   createComment: (text: string) => Comment;
@@ -44,6 +47,10 @@ function nextSibling(node: Node): Node | null {
   return node.nextSibling;
 }
 
+function removeChild(prevVNode: VNode, container: any): void {
+  return container.removeChild(prevVNode.elm);
+}
+
 function createElement(tagName: any): HTMLElement {
   return document.createElement(tagName);
 }
@@ -65,6 +72,7 @@ export const domapi: DOMAPI = {
   isComment,
   parentNode,
   nextSibling,
+  removeChild,
   createElement,
   createTextNode,
   createComment,
