@@ -32,6 +32,22 @@ describe('@lothric/renderer/render.ts (render element)', () => {
     );
     expect(root.innerHTML).toBe('<span style="font-size: 12px; color: red; background-color: gold;"></span>');
   });
+
+  it('should create an element with custom attributes', () => {
+    render(h('div', { custom: 'attr' }), root);
+    expect(root.innerHTML).toBe('<div custom="attr"></div>');
+  });
+
+  it('should create an element with DOM properties', () => {
+    render(
+      h('input', {
+        type: 'checkbox',
+        checked: true,
+      }),
+      root,
+    );
+    expect(root.innerHTML).toBe('<input type="checkbox">');
+  });
 });
 
 describe('@lothric/renderer/render.ts (render text)', () => {

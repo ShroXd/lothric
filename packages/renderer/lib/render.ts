@@ -1,15 +1,18 @@
-import { DOMAPI } from './domapi';
 import { getRenderPreset } from './renderOptions';
-import { isString, keys } from './utils';
+import { extend, isString, keys } from './utils';
 import { VNode, VNodeFlags } from './vnode';
 
 export function renderer() {
   const options = getRenderPreset();
-  return createRenderer(options);
+  return createRenderer(
+    extend({}, options, {
+      domProp: /\[A-Z]|^(?:value|checked|selected|muted)$/,
+    }),
+  );
 }
 
 // TODO change options type
-function createRenderer(options: DOMAPI): any {
+function createRenderer(options: any): any {
   const {
     // tagName,
     // setTextContent,
@@ -22,6 +25,7 @@ function createRenderer(options: DOMAPI): any {
     createElement,
     createTextNode,
     // createComment,
+    domProp,
   } = options;
 
   const patch = (prevVNode: VNode, nextVNode: VNode, container: Element) => {
@@ -85,14 +89,15 @@ function createRenderer(options: DOMAPI): any {
             break;
           case 'style':
             for (let k in data.style) {
-              // elm.setAttribute('style', `${k}: ${data.style[k]}`);
               elm.style[k] = data.style[k];
             }
             break;
-          case 'props':
-          // TODO handle props
-          case 'on':
-          // TODO handle on
+          default:
+            if (domProp.test(key)) {
+              elm[key] = data[key];
+            } else {
+              elm.setAttribute(key, data[key]);
+            }
         }
       });
     }
