@@ -142,9 +142,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     expect(vnode.data).toBe(undefined);
     expect(vnode.children).toBe('I am a text');
   });
-});
 
-describe('@lothric/renderer/h.ts (base test case)', () => {
   it('should handle svg flag correctly', () => {
     const vnode = h('svg');
     expect(vnode.flag).toBe(VNodeFlags.ELEMENT_SVG);
@@ -155,8 +153,21 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     expect(vnode.flag).toBe(VNodeFlags.FRAGMENT);
   });
 
+  it('should handle fragment with child node correctly', () => {
+    const vnode = h(Fragment, h('span'));
+    expect(vnode.childFlag).toBe(ChildFlags.SINGLE_CHILD);
+  });
+
   it('should handle protal correctly', () => {
     const vnode = h(Portal);
     expect(vnode.flag).toBe(VNodeFlags.PORTAL);
+    expect(vnode.childFlag).toBe(ChildFlags.NO_CHILDREN);
+  });
+
+  it('should handle portal with target correctly', () => {
+    const vnode = h(Portal, { target: '#root' });
+    expect(vnode.flag).toBe(VNodeFlags.PORTAL);
+    expect(vnode.data).toStrictEqual({ target: '#root' });
+    expect(vnode.childFlag).toBe(ChildFlags.NO_CHILDREN);
   });
 });

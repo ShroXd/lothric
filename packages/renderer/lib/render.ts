@@ -1,6 +1,6 @@
-import { getRenderPreset } from './renderOptions';
+import { getRenderPreset } from './render-options';
 import { extend, isString, keys } from './utils';
-import { VNode, VNodeFlags } from './vnode';
+import { ChildFlags, VNode, VNodeFlags } from './vnode';
 
 export function renderer() {
   const options = getRenderPreset();
@@ -104,9 +104,23 @@ function createRenderer(options: any): any {
       });
     }
 
-    // TODO 递归处理子节点
-    if (isString(vnode.children)) {
-      mountText(vnode, elm);
+    const { children, childFlag } = vnode;
+    switch (childFlag) {
+      case ChildFlags.NO_CHILDREN:
+        container.appendChild(elm);
+        return;
+      case ChildFlags.SINGLE_CHILD:
+        if (isString(children)) {
+          mountText(vnode, elm);
+        } else {
+          mount(children as VNode, container);
+        }
+        break;
+      case ChildFlags.MULTI_CHILDREN:
+        (children as Array<VNode | string>).forEach((child) => {
+          mount(child as VNode, container);
+        });
+        break;
     }
     container.appendChild(elm);
   };
@@ -117,9 +131,46 @@ function createRenderer(options: any): any {
     container.appendChild(elm);
   };
 
-  const mountFragment = (vnode: VNode, container: any) => {};
+  const mountFragment = (vnode: VNode, container: any) => {
+    const { children, childFlag } = vnode;
 
-  const mountPortal = (vnode: VNode, container: any) => {};
+    switch (childFlag) {
+      case ChildFlags.NO_CHILDREN:
+        // TODO Should I insert a placehold text node here?
+        break;
+      case ChildFlags.SINGLE_CHILD:
+        mount(children as VNode, container);
+        break;
+      case ChildFlags.MULTI_CHILDREN:
+        (children as Array<VNode | string>).forEach((child) => {
+          mount(child as VNode, container);
+        });
+        break;
+    }
+  };
+
+  const mountPortal = (vnode: VNode, container: any) => {
+    const { data, children, childFlag } = vnode;
+    const target = document.querySelector(data?.target) || container;
+
+    switch (childFlag) {
+      case ChildFlags.NO_CHILDREN:
+        // TODO Should I insert a placehold text node here?
+        break;
+      case ChildFlags.SINGLE_CHILD:
+        mount(children as VNode, target);
+        break;
+      case ChildFlags.MULTI_CHILDREN:
+        (children as Array<VNode | string>).forEach((child) => {
+          mount(child as VNode, target);
+        });
+        break;
+    }
+
+    const placeholder = createTextNode('');
+    container.appendChild(placeholder);
+    vnode.elm = placeholder;
+  };
 
   const mountComponent = (vnode: VNode, flag: any, container: any) => {
     if (flag & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {

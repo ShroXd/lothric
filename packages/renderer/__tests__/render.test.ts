@@ -1,5 +1,6 @@
 import { renderer } from '../lib/render';
 import { h } from '../lib/h';
+import { Fragment, Portal } from '../lib/vnode';
 
 const triggerEvent = (type: string, elm: Element) => {
   const event = new Event(type);
@@ -80,5 +81,44 @@ describe('@lothric/renderer/render.ts (render text)', () => {
   it('should create a text node', () => {
     render(h('span', 'I am a text'), root);
     expect(root.innerHTML).toBe('<span>I am a text</span>');
+  });
+});
+
+describe('@lothric/renderer/render.ts (render fragment)', () => {
+  let root: Element;
+  let render: any;
+  beforeEach(() => {
+    root = document.createElement('div');
+    render = renderer();
+  });
+
+  it('should render fragment with single child', () => {
+    render(h(Fragment, h('span')), root);
+    expect(root.innerHTML).toBe('<span></span>');
+  });
+
+  it('should render fragment with multi children', () => {
+    render(h(Fragment, [h('div'), h('span')]), root);
+    expect(root.innerHTML).toBe('<div></div><span></span>');
+  });
+});
+
+describe('@lothric/renderer/render.ts (render fragment)', () => {
+  let root: Element;
+  let render: any;
+  beforeEach(() => {
+    root = document.createElement('div');
+    render = renderer();
+  });
+
+  it('should render portal with single child', () => {
+    render(h(Portal, h('span')), root);
+    expect(root.innerHTML).toBe('<span></span>');
+  });
+
+  it('should render portal with target', () => {
+    const vnode = h('div', { class: 'root' }, h(Portal, { target: '#portal' }, [h('span'), h('span')]));
+    render(vnode, root);
+    expect(root.innerHTML).toBe('<span></span><span></span><div class="root"></div>');
   });
 });
