@@ -43,7 +43,10 @@ function createRenderer(options: RenderOptions): any {
     }
   };
 
-  const replaceVNode = (prevVNode: VNode, nextVNode: VNode, container: any) => {};
+  const replaceVNode = (prevVNode: VNode, nextVNode: VNode, container: any) => {
+    removeChild(prevVNode, container);
+    mount(nextVNode, container);
+  };
 
   const patchElement = (prevVnode: VNode, nextVNode: VNode, container: any) => {};
 

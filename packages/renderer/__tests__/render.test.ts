@@ -131,6 +131,13 @@ describe('@lothric/renderer/render.ts (patch & unmount)', () => {
     render = renderer();
   });
 
+  it('should replace vnode for defferent type vnode', () => {
+    render(h('span'), root);
+    expect(root.innerHTML).toBe('<span></span>');
+    render(h(Fragment, h('div')), root);
+    expect(root.innerHTML).toBe('<div></div>');
+  });
+
   it('should unmount vnode correctly', () => {
     render(h('span'), root);
     expect(root.innerHTML).toBe('<span></span>');
