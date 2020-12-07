@@ -1,5 +1,5 @@
 import { h } from '../lib/h';
-import { Fragment, Portal, VNodeFlags } from '../lib/vnode';
+import { ChildFlags, Fragment, Portal, VNodeFlags } from '../lib/vnode';
 
 describe('@lothric/renderer/h.ts (base test case)', () => {
   it('should handle sel correctly', () => {
@@ -10,6 +10,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       elm: undefined,
       data: undefined,
       children: undefined,
+      childFlag: ChildFlags.NO_CHILDREN,
     });
   });
 
@@ -22,6 +23,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       elm: undefined,
       data,
       children: undefined,
+      childFlag: ChildFlags.NO_CHILDREN,
     });
   });
 
@@ -33,15 +35,15 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data,
-      children: [
-        {
-          sel: 'span',
-          flag: VNodeFlags.ELEMENT_HTML,
-          elm: undefined,
-          data: undefined,
-          children: undefined,
-        },
-      ],
+      children: {
+        sel: 'span',
+        flag: VNodeFlags.ELEMENT_HTML,
+        elm: undefined,
+        data: undefined,
+        children: undefined,
+        childFlag: ChildFlags.NO_CHILDREN,
+      },
+      childFlag: ChildFlags.SINGLE_CHILD,
     });
   });
 
@@ -52,15 +54,15 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data: undefined,
-      children: [
-        {
-          sel: 'span',
-          flag: VNodeFlags.ELEMENT_HTML,
-          elm: undefined,
-          data: undefined,
-          children: undefined,
-        },
-      ],
+      children: {
+        sel: 'span',
+        flag: VNodeFlags.ELEMENT_HTML,
+        elm: undefined,
+        data: undefined,
+        children: undefined,
+        childFlag: ChildFlags.NO_CHILDREN,
+      },
+      childFlag: ChildFlags.SINGLE_CHILD,
     });
   });
 
@@ -78,6 +80,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
+          childFlag: ChildFlags.NO_CHILDREN,
         },
         {
           sel: 'span',
@@ -85,8 +88,10 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
+          childFlag: ChildFlags.NO_CHILDREN,
         },
       ],
+      childFlag: ChildFlags.MULTI_CHILDREN,
     });
   });
 
@@ -105,6 +110,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
+          childFlag: ChildFlags.NO_CHILDREN,
         },
         {
           sel: 'span',
@@ -112,8 +118,10 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
+          childFlag: ChildFlags.NO_CHILDREN,
         },
       ],
+      childFlag: ChildFlags.MULTI_CHILDREN,
     });
   });
 
@@ -125,6 +133,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       elm: undefined,
       data: { class: 'title' },
       children: 'I am a text',
+      childFlag: ChildFlags.SINGLE_CHILD,
     });
   });
 

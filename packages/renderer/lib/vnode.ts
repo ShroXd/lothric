@@ -2,10 +2,11 @@ import { keys } from './utils';
 
 export interface VNode {
   sel: string | undefined;
-  flag: any;
+  flag: VNodeFlags;
+  childFlag: ChildFlags;
   elm: any | undefined /* Reference of real node */;
   data: VNodeData | undefined;
-  children: Array<VNode | string> | string | undefined /* Reuse properties */;
+  children: Array<VNode | string> | VNode | string | undefined /* Reuse properties */;
 }
 
 export interface VNodeData {
@@ -37,16 +38,24 @@ export enum VNodeFlags {
     COMPONENT_STATEFUL_KEPT_ALIVE,
 }
 
+export enum ChildFlags {
+  NO_CHILDREN = 1,
+  SINGLE_CHILD = 1 << 1,
+  MULTI_CHILDREN = 1 << 2,
+}
+
 export const Fragment = Symbol();
 export const Portal = Symbol();
 
 export function vnode(
   sel: string | undefined,
-  flag: any,
+  flag: VNodeFlags,
   elm: any | undefined,
   data: any | undefined,
   children: Array<VNode | string> | undefined,
+  childFlag?: ChildFlags,
 ): VNode {
   if (keys(data).length === 0) data = undefined;
-  return { sel, flag, elm, data, children };
+  if (!childFlag) childFlag = ChildFlags.NO_CHILDREN;
+  return { sel, flag, childFlag, elm, data, children };
 }
