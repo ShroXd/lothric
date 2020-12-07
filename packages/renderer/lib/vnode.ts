@@ -6,7 +6,7 @@ export interface VNode {
   childFlag: ChildFlags;
   elm: any | undefined /* Reference of real node */;
   data: VNodeData | undefined;
-  children: Array<VNode | string> | VNode | string | undefined /* Reuse properties */;
+  children: Array<VNode | string> | VNode | string | undefined /* Reuse properties for text node */;
 }
 
 export interface VNodeData {
@@ -25,10 +25,10 @@ export enum VNodeFlags {
   PORTAL = 1 << 4,
 
   /* Component */
-  COMPONENT_FUNCTIONAL = 1 << 8,
-  COMPONENT_STATEFUL_NORMAL = 1 << 5,
-  COMPONENT_STATEFUL_NEED_KEEP_ALIVE = 1 << 6,
-  COMPONENT_STATEFUL_KEPT_ALIVE = 1 << 7,
+  COMPONENT_FUNCTIONAL = 1 << 5,
+  COMPONENT_STATEFUL_NORMAL = 1 << 6,
+  COMPONENT_STATEFUL_NEED_KEEP_ALIVE = 1 << 7,
+  COMPONENT_STATEFUL_KEPT_ALIVE = 1 << 8,
 
   /* Union */
   ELEMENT = ELEMENT_HTML | ELEMENT_SVG,

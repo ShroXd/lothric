@@ -1,18 +1,13 @@
-import { getRenderPreset } from './render-options';
-import { extend, isString, keys } from './utils';
+import { getRenderPreset, RenderOptions } from './render-options';
+import { isString, keys } from './utils';
 import { ChildFlags, VNode, VNodeFlags } from './vnode';
 
 export function renderer() {
   const options = getRenderPreset();
-  return createRenderer(
-    extend({}, options, {
-      domProp: /\[A-Z]|^(?:value|checked|selected|muted)$/,
-    }),
-  );
+  return createRenderer(options);
 }
 
-// TODO change options type
-function createRenderer(options: any): any {
+function createRenderer(options: RenderOptions): any {
   const {
     // tagName,
     // setTextContent,
@@ -104,6 +99,7 @@ function createRenderer(options: any): any {
       });
     }
 
+    /* handle children nodes */
     const { children, childFlag } = vnode;
     switch (childFlag) {
       case ChildFlags.NO_CHILDREN:
@@ -132,6 +128,20 @@ function createRenderer(options: any): any {
   };
 
   const mountFragment = (vnode: VNode, container: any) => {
+    return mountChildren(vnode, container);
+  };
+
+  const mountPortal = (vnode: VNode, container: any) => {
+    const { data } = vnode;
+    const target = document.querySelector(data?.target) || container;
+    mountChildren(vnode, target);
+
+    const placeholder = createTextNode('');
+    container.appendChild(placeholder);
+    vnode.elm = placeholder;
+  };
+
+  const mountChildren = (vnode: VNode, container: any) => {
     const { children, childFlag } = vnode;
 
     switch (childFlag) {
@@ -147,29 +157,6 @@ function createRenderer(options: any): any {
         });
         break;
     }
-  };
-
-  const mountPortal = (vnode: VNode, container: any) => {
-    const { data, children, childFlag } = vnode;
-    const target = document.querySelector(data?.target) || container;
-
-    switch (childFlag) {
-      case ChildFlags.NO_CHILDREN:
-        // TODO Should I insert a placehold text node here?
-        break;
-      case ChildFlags.SINGLE_CHILD:
-        mount(children as VNode, target);
-        break;
-      case ChildFlags.MULTI_CHILDREN:
-        (children as Array<VNode | string>).forEach((child) => {
-          mount(child as VNode, target);
-        });
-        break;
-    }
-
-    const placeholder = createTextNode('');
-    container.appendChild(placeholder);
-    vnode.elm = placeholder;
   };
 
   const mountComponent = (vnode: VNode, flag: any, container: any) => {
