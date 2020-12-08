@@ -59,3 +59,14 @@ export function vnode(
   if (!childFlag) childFlag = ChildFlags.NO_CHILD;
   return { sel, flag, childFlag, elm, data, children };
 }
+
+export function createTextVNode(text: string) {
+  return {
+    sel: null,
+    flag: VNodeFlags.TEXT,
+    childFlag: ChildFlags.NO_CHILD,
+    elm: null,
+    data: null,
+    children: text,
+  };
+}

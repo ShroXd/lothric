@@ -158,13 +158,12 @@ describe('@lothric/renderer/render.ts (patch & unmount)', () => {
   });
 
   it('should patch text node correctly', () => {
-    // TODO should implement patch element function first
     const vnode1 = h('span', 'first text');
     const vnode2 = h('span', 'second text');
     render(vnode1, root);
-    console.log(root.firstElementChild?.innerHTML);
+    expect(root.firstElementChild!.innerHTML).toBe('first text');
     render(vnode2, root);
-    console.log(root.firstElementChild?.innerHTML);
+    expect(root.firstElementChild!.innerHTML).toBe('second text');
   });
 
   it('should unmount vnode correctly', () => {

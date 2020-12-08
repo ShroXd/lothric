@@ -213,8 +213,8 @@ function createRenderer(options: RenderOptions): any {
         container.appendChild(elm);
         return;
       case ChildFlags.SINGLE_CHILD:
-        if (isString(children)) {
-          mountText(vnode, elm);
+        if (isString((children as VNode)?.children)) {
+          mountText(children as VNode, elm);
         } else {
           mount(children as VNode, container);
         }

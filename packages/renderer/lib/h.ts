@@ -1,5 +1,5 @@
 import { isArray, isString } from './utils';
-import { ChildFlags, Fragment, Portal, vnode, VNode, VNodeData, VNodeFlags } from './vnode';
+import { ChildFlags, createTextVNode, Fragment, Portal, vnode, VNode, VNodeData, VNodeFlags } from './vnode';
 
 export function h(sel: string | symbol): VNode;
 export function h(sel: string | symbol, data: VNodeData | undefined): VNode;
@@ -15,16 +15,22 @@ export function h(sel: any, a?: any, b?: any): VNode {
       data = a;
       childFlag = ChildFlags.SINGLE_CHILD;
     }
-    if ((b && b.sel) || isString(b)) {
+    if (b && b.sel) {
       children = b;
+      childFlag = ChildFlags.SINGLE_CHILD;
+    } else if (isString(b)) {
+      children = createTextVNode(b);
       childFlag = ChildFlags.SINGLE_CHILD;
     } else if (isArray(b)) {
       children = b;
       childFlag = ChildFlags.MULTI_CHILDREN;
     }
   } else if (!!a) {
-    if ((a && a.sel) || isString(a)) {
+    if (a && a.sel) {
       children = a;
+      childFlag = ChildFlags.SINGLE_CHILD;
+    } else if (isString(a)) {
+      children = createTextVNode(a);
       childFlag = ChildFlags.SINGLE_CHILD;
     } else if (isArray(a)) {
       children = a;

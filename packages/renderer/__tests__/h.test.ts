@@ -132,7 +132,14 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data: { class: 'title' },
-      children: 'I am a text',
+      children: {
+        sel: null,
+        flag: VNodeFlags.TEXT,
+        elm: null,
+        data: null,
+        children: 'I am a text',
+        childFlag: ChildFlags.NO_CHILD,
+      },
       childFlag: ChildFlags.SINGLE_CHILD,
     });
   });
@@ -140,7 +147,14 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
   it('should create an element with text child node', () => {
     const vnode = h('span', 'I am a text');
     expect(vnode.data).toBe(undefined);
-    expect(vnode.children).toBe('I am a text');
+    expect(vnode.children).toStrictEqual({
+      sel: null,
+      flag: VNodeFlags.TEXT,
+      elm: null,
+      data: null,
+      children: 'I am a text',
+      childFlag: ChildFlags.NO_CHILD,
+    });
   });
 
   it('should handle svg flag correctly', () => {
