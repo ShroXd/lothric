@@ -66,6 +66,9 @@ function createRenderer(options: RenderOptions): any {
         patchVNodeData(elm, key, prevValue, nextValue);
       });
     }
+
+    /* patch vnode children */
+    patchChildren(prevVnode, nextVNode, container);
   };
 
   const patchVNodeData = (elm: any, key: any, prevValue: any, nextValue: any) => {
@@ -103,7 +106,63 @@ function createRenderer(options: RenderOptions): any {
     }
   };
 
-  // const patchChildren = () => {};
+  const patchChildren = (prevVNode: VNode, nextVNode: VNode, container: any) => {
+    const { children: prevChildren, childFlag: prevChildFlag } = prevVNode;
+    const { children: nextChildren, childFlag: nextChildFlag } = nextVNode;
+
+    switch (prevChildFlag) {
+      case ChildFlags.NO_CHILD:
+        switch (nextChildFlag) {
+          case ChildFlags.NO_CHILD:
+            /* Nothing */
+            break;
+          case ChildFlags.SINGLE_CHILD:
+            mount(nextChildren as VNode, container);
+            break;
+          case ChildFlags.MULTI_CHILDREN:
+            (nextChildren as Array<VNode | string>).forEach((child) => {
+              mount(child as VNode, container);
+            });
+            break;
+        }
+        break;
+      case ChildFlags.SINGLE_CHILD:
+        switch (nextChildFlag) {
+          case ChildFlags.NO_CHILD:
+            unmount(prevChildren as VNode, container);
+            break;
+          case ChildFlags.SINGLE_CHILD:
+            /* TODO should I fix this fucking type? */
+            patch(prevChildren as VNode, nextChildren as VNode, container);
+            break;
+          case ChildFlags.MULTI_CHILDREN:
+            unmount(prevChildren as VNode, container);
+            (nextChildren as Array<VNode | string>).forEach((child) => {
+              mount(child as VNode, container);
+            });
+            break;
+        }
+        break;
+      case ChildFlags.MULTI_CHILDREN:
+        switch (nextChildFlag) {
+          case ChildFlags.NO_CHILD:
+            (nextChildren as Array<VNode | string>).forEach((child) => {
+              mount(child as VNode, container);
+            });
+            break;
+          case ChildFlags.SINGLE_CHILD:
+            (nextChildren as Array<VNode | string>).forEach((child) => {
+              mount(child as VNode, container);
+            });
+            mount(nextChildren as VNode, container);
+            break;
+          case ChildFlags.MULTI_CHILDREN:
+            // TODO diff
+            break;
+        }
+        break;
+    }
+  };
 
   const patchText = (prevVnode: VNode, nextVNode: VNode, container: any) => {
     const elm = (nextVNode.elm = prevVnode.elm);
@@ -137,6 +196,7 @@ function createRenderer(options: RenderOptions): any {
   const mountElement = (vnode: VNode, container: Element) => {
     const elm = createElement(vnode.sel);
     vnode.elm = elm;
+    container.appendChild(elm);
 
     /* handle data */
     const data = vnode.data;
@@ -149,7 +209,7 @@ function createRenderer(options: RenderOptions): any {
     /* handle children nodes */
     const { children, childFlag } = vnode;
     switch (childFlag) {
-      case ChildFlags.NO_CHILDREN:
+      case ChildFlags.NO_CHILD:
         container.appendChild(elm);
         return;
       case ChildFlags.SINGLE_CHILD:
@@ -165,7 +225,6 @@ function createRenderer(options: RenderOptions): any {
         });
         break;
     }
-    container.appendChild(elm);
   };
 
   const mountText = (vnode: VNode, container: any) => {
@@ -192,7 +251,7 @@ function createRenderer(options: RenderOptions): any {
     const { children, childFlag } = vnode;
 
     switch (childFlag) {
-      case ChildFlags.NO_CHILDREN:
+      case ChildFlags.NO_CHILD:
         // TODO Should I insert a placehold text node here?
         break;
       case ChildFlags.SINGLE_CHILD:
