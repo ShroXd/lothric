@@ -48,9 +48,69 @@ function createRenderer(options: RenderOptions): any {
     mount(nextVNode, container);
   };
 
-  const patchElement = (prevVnode: VNode, nextVNode: VNode, container: any) => {};
+  const patchElement = (prevVnode: VNode, nextVNode: VNode, container: any) => {
+    /* replace vnode for different tag node */
+    if (prevVnode.sel !== nextVNode.sel) {
+      replaceVNode(prevVnode, nextVNode, container);
+      return;
+    }
 
-  const patchText = (prevVnode: VNode, nextVNode: VNode, container: any) => {};
+    /* patch vnode data */
+    const elm = (nextVNode.elm = prevVnode.elm);
+    const prevData = prevVnode.data;
+    const nextData = nextVNode.data;
+    if (nextData) {
+      keys(nextData).forEach((key) => {
+        const prevValue = prevData?.[key];
+        const nextValue = nextData?.[key];
+        patchVNodeData(elm, key, prevValue, nextValue);
+      });
+    }
+  };
+
+  const patchVNodeData = (elm: any, key: any, prevValue: any, nextValue: any) => {
+    switch (key) {
+      case 'class':
+        elm.className = nextValue;
+        break;
+      case 'style':
+        /* Apple new style */
+        for (let k in nextValue) {
+          (elm as HTMLElement).style[k] = nextValue[k];
+        }
+        /* Delete defference set of old style & new style  */
+        if (!!prevValue) break;
+        for (let k in prevValue) {
+          if (!nextValue.hasOwnProperty(k)) {
+            (elm as HTMLElement).style[k] = '';
+          }
+        }
+        break;
+      default:
+        if (key[0] === 'o' && key[1] === 'n') {
+          if (prevValue) {
+            elm.removeEventListener(key.slice(2).toLocaleLowerCase(), prevValue);
+          }
+          if (nextValue) {
+            elm.addEventListener(key.slice(2).toLocaleLowerCase(), nextValue);
+          }
+        } else if (domProp.test(key)) {
+          elm[key] = nextValue[key];
+        } else {
+          elm.setAttribute(key, nextValue);
+        }
+        break;
+    }
+  };
+
+  // const patchChildren = () => {};
+
+  const patchText = (prevVnode: VNode, nextVNode: VNode, container: any) => {
+    const elm = (nextVNode.elm = prevVnode.elm);
+    if (elm && nextVNode.children !== prevVnode.children) {
+      elm.nodeValue = nextVNode.children as string;
+    }
+  };
 
   const patchFragment = (prevVnode: VNode, nextVNode: VNode, container: any) => {};
 
@@ -82,24 +142,7 @@ function createRenderer(options: RenderOptions): any {
     const data = vnode.data;
     if (data) {
       keys(data).forEach((key) => {
-        switch (key) {
-          case 'class':
-            elm.className = data[key];
-            break;
-          case 'style':
-            for (let k in data.style) {
-              elm.style[k] = data.style[k];
-            }
-            break;
-          default:
-            if (key[0] === 'o' && key[1] === 'n') {
-              elm.addEventListener(key.slice(2).toLocaleLowerCase(), data[key]);
-            } else if (domProp.test(key)) {
-              elm[key] = data[key];
-            } else {
-              elm.setAttribute(key, data[key]);
-            }
-        }
+        patchVNodeData(elm, key, undefined, data?.[key]);
       });
     }
 

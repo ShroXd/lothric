@@ -138,6 +138,35 @@ describe('@lothric/renderer/render.ts (patch & unmount)', () => {
     expect(root.innerHTML).toBe('<div></div>');
   });
 
+  it('should patch element style correctly', () => {
+    const vnode1 = h('div', {
+      class: 'title',
+      style: {
+        color: 'red',
+      },
+    });
+    const vnode2 = h('div', {
+      class: 'title',
+      style: {
+        color: 'blue',
+      },
+    });
+    render(vnode1, root);
+    expect(root.children[0].getAttribute('style')).toBe('color: red;');
+    render(vnode2, root);
+    expect(root.children[0].getAttribute('style')).toBe('color: blue;');
+  });
+
+  it('should patch text node correctly', () => {
+    // TODO should implement patch element function first
+    const vnode1 = h('span', 'first text');
+    const vnode2 = h('span', 'second text');
+    render(vnode1, root);
+    console.log(root.firstElementChild?.innerHTML);
+    render(vnode2, root);
+    console.log(root.firstElementChild?.innerHTML);
+  });
+
   it('should unmount vnode correctly', () => {
     render(h('span'), root);
     expect(root.innerHTML).toBe('<span></span>');

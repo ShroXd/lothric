@@ -4,7 +4,7 @@ export interface VNode {
   sel: string | undefined;
   flag: VNodeFlags;
   childFlag: ChildFlags;
-  elm: any | undefined /* Reference of real node */;
+  elm: Node | null /* Reference of real node */;
   data: VNodeData | undefined;
   children: Array<VNode | string> | VNode | string | undefined /* Reuse properties for text node */;
 }
