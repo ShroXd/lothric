@@ -39,7 +39,7 @@ export enum VNodeFlags {
 }
 
 export enum ChildFlags {
-  NO_CHILDREN = 1,
+  NO_CHILD = 1,
   SINGLE_CHILD = 1 << 1,
   MULTI_CHILDREN = 1 << 2,
 }
@@ -56,6 +56,6 @@ export function vnode(
   childFlag?: ChildFlags,
 ): VNode {
   if (keys(data).length === 0) data = undefined;
-  if (!childFlag) childFlag = ChildFlags.NO_CHILDREN;
+  if (!childFlag) childFlag = ChildFlags.NO_CHILD;
   return { sel, flag, childFlag, elm, data, children };
 }

@@ -10,7 +10,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       elm: undefined,
       data: undefined,
       children: undefined,
-      childFlag: ChildFlags.NO_CHILDREN,
+      childFlag: ChildFlags.NO_CHILD,
     });
   });
 
@@ -23,7 +23,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
       elm: undefined,
       data,
       children: undefined,
-      childFlag: ChildFlags.NO_CHILDREN,
+      childFlag: ChildFlags.NO_CHILD,
     });
   });
 
@@ -41,7 +41,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
         elm: undefined,
         data: undefined,
         children: undefined,
-        childFlag: ChildFlags.NO_CHILDREN,
+        childFlag: ChildFlags.NO_CHILD,
       },
       childFlag: ChildFlags.SINGLE_CHILD,
     });
@@ -60,7 +60,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
         elm: undefined,
         data: undefined,
         children: undefined,
-        childFlag: ChildFlags.NO_CHILDREN,
+        childFlag: ChildFlags.NO_CHILD,
       },
       childFlag: ChildFlags.SINGLE_CHILD,
     });
@@ -80,7 +80,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
-          childFlag: ChildFlags.NO_CHILDREN,
+          childFlag: ChildFlags.NO_CHILD,
         },
         {
           sel: 'span',
@@ -88,7 +88,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
-          childFlag: ChildFlags.NO_CHILDREN,
+          childFlag: ChildFlags.NO_CHILD,
         },
       ],
       childFlag: ChildFlags.MULTI_CHILDREN,
@@ -110,7 +110,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
-          childFlag: ChildFlags.NO_CHILDREN,
+          childFlag: ChildFlags.NO_CHILD,
         },
         {
           sel: 'span',
@@ -118,7 +118,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
           elm: undefined,
           data: undefined,
           children: undefined,
-          childFlag: ChildFlags.NO_CHILDREN,
+          childFlag: ChildFlags.NO_CHILD,
         },
       ],
       childFlag: ChildFlags.MULTI_CHILDREN,
@@ -161,13 +161,13 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
   it('should handle protal correctly', () => {
     const vnode = h(Portal);
     expect(vnode.flag).toBe(VNodeFlags.PORTAL);
-    expect(vnode.childFlag).toBe(ChildFlags.NO_CHILDREN);
+    expect(vnode.childFlag).toBe(ChildFlags.NO_CHILD);
   });
 
   it('should handle portal with target correctly', () => {
     const vnode = h(Portal, { target: '#root' });
     expect(vnode.flag).toBe(VNodeFlags.PORTAL);
     expect(vnode.data).toStrictEqual({ target: '#root' });
-    expect(vnode.childFlag).toBe(ChildFlags.NO_CHILDREN);
+    expect(vnode.childFlag).toBe(ChildFlags.NO_CHILD);
   });
 });

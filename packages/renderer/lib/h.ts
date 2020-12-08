@@ -9,7 +9,7 @@ export function h(sel: any, a?: any, b?: any): VNode {
   let data: VNodeData = {};
   let children: any;
   const flag = parseFlag(sel);
-  let childFlag = ChildFlags.NO_CHILDREN;
+  let childFlag = ChildFlags.NO_CHILD;
   if (!!b) {
     if (!!a) {
       data = a;
