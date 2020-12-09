@@ -119,7 +119,7 @@ describe('@lothric/renderer/render.ts (render fragment)', () => {
   it('should render portal with target', () => {
     const vnode = h('div', { class: 'root' }, h(Portal, { target: '#portal' }, [h('span'), h('span')]));
     render(vnode, root);
-    expect(root.innerHTML).toBe('<div class="root"></div><span></span><span></span>');
+    expect(root.innerHTML).toBe('<div class="root"><span></span><span></span></div>');
   });
 });
 
@@ -198,7 +198,7 @@ describe('@lothric/renderer/render.ts (patch children)', () => {
     render(vnode1, root);
     expect(root.innerHTML).toBe('<div></div>');
     render(vnode2, root);
-    expect(root.innerHTML).toBe('<div></div><div class="title"></div>');
+    expect(root.innerHTML).toBe('<div><div class="title"></div></div>');
   });
 
   it('should handle NO_CHILD -> MULTI_CHILD', () => {
@@ -207,14 +207,14 @@ describe('@lothric/renderer/render.ts (patch children)', () => {
     render(vnode1, root);
     expect(root.innerHTML).toBe('<div></div>');
     render(vnode2, root);
-    expect(root.innerHTML).toBe('<div></div><h1></h1><h1></h1>');
+    expect(root.innerHTML).toBe('<div><h1></h1><h1></h1></div>');
   });
 
   it('should handle SINGLE_CHILD -> NO_CHILD', () => {
     const vnode1 = h('div', h('span'));
     const vnode2 = h('div');
     render(vnode1, root);
-    expect(root.innerHTML).toBe('<div></div><span></span>');
+    expect(root.innerHTML).toBe('<div><span></span></div>');
     render(vnode2, root);
     expect(root.innerHTML).toBe('<div></div>');
   });
@@ -223,35 +223,35 @@ describe('@lothric/renderer/render.ts (patch children)', () => {
     const vnode1 = h('div', h('h1'));
     const vnode2 = h('div', h('h2'));
     render(vnode1, root);
-    expect(root.innerHTML).toBe('<div></div><h1></h1>');
+    expect(root.innerHTML).toBe('<div><h1></h1></div>');
     render(vnode2, root);
-    expect(root.innerHTML).toBe('<div></div><h2></h2>');
+    expect(root.innerHTML).toBe('<div><h2></h2></div>');
   });
 
   it('should handle SINGLE_CHILD -> MULTI_CHILDREN', () => {
     const vnode1 = h('div', h('h1'));
     const vnode2 = h('div', [h('h2'), h('h3')]);
     render(vnode1, root);
-    expect(root.innerHTML).toBe('<div></div><h1></h1>');
+    expect(root.innerHTML).toBe('<div><h1></h1></div>');
     render(vnode2, root);
-    expect(root.innerHTML).toBe('<div></div><h2></h2><h3></h3>');
+    expect(root.innerHTML).toBe('<div><h2></h2><h3></h3></div>');
   });
 
   it('should handle MULTI_CHILDREN -> NO_CHILD', () => {
     const vnode1 = h('div', [h('h1'), h('h2'), h('h3')]);
     const vnode2 = h('div');
     render(vnode1, root);
-    expect(root.innerHTML).toBe('<div></div><h1></h1><h2></h2><h3></h3>');
+    expect(root.innerHTML).toBe('<div><h1></h1><h2></h2><h3></h3></div>');
     render(vnode2, root);
     expect(root.innerHTML).toBe('<div></div>');
   });
 
   it('should handle MULTI_CHILDREN -> SINGLE_CHILD', () => {
-    const vnode1 = h('div', [h('h1'), h('h2'), h('h3')]);
-    const vnode2 = h('div');
+    const vnode1 = h('span', [h('h1'), h('h2'), h('h3')]);
+    const vnode2 = h('span');
     render(vnode1, root);
-    expect(root.innerHTML).toBe('<div></div><h1></h1><h2></h2><h3></h3>');
+    expect(root.innerHTML).toBe('<span><h1></h1><h2></h2><h3></h3></span>');
     render(vnode2, root);
-    expect(root.innerHTML).toBe('<div></div>');
+    expect(root.innerHTML).toBe('<span></span>');
   });
 });

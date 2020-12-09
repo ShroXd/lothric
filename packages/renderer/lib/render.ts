@@ -68,7 +68,7 @@ function createRenderer(options: RenderOptions): any {
     }
 
     /* patch vnode children */
-    patchChildren(prevVnode, nextVNode, container);
+    patchChildren(prevVnode, nextVNode, elm);
   };
 
   const patchVNodeData = (elm: any, key: any, prevValue: any, nextValue: any) => {
@@ -216,12 +216,12 @@ function createRenderer(options: RenderOptions): any {
         if (isString((children as VNode)?.children)) {
           mountText(children as VNode, elm);
         } else {
-          mount(children as VNode, container);
+          mount(children as VNode, elm);
         }
         break;
       case ChildFlags.MULTI_CHILDREN:
         (children as Array<VNode | string>).forEach((child) => {
-          mount(child as VNode, container);
+          mount(child as VNode, elm);
         });
         break;
     }
