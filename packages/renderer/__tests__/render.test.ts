@@ -236,4 +236,22 @@ describe('@lothric/renderer/render.ts (patch children)', () => {
     render(vnode2, root);
     expect(root.innerHTML).toBe('<div></div><h2></h2><h3></h3>');
   });
+
+  it('should handle MULTI_CHILDREN -> NO_CHILD', () => {
+    const vnode1 = h('div', [h('h1'), h('h2'), h('h3')]);
+    const vnode2 = h('div');
+    render(vnode1, root);
+    expect(root.innerHTML).toBe('<div></div><h1></h1><h2></h2><h3></h3>');
+    render(vnode2, root);
+    expect(root.innerHTML).toBe('<div></div>');
+  });
+
+  it('should handle MULTI_CHILDREN -> SINGLE_CHILD', () => {
+    const vnode1 = h('div', [h('h1'), h('h2'), h('h3')]);
+    const vnode2 = h('div');
+    render(vnode1, root);
+    expect(root.innerHTML).toBe('<div></div><h1></h1><h2></h2><h3></h3>');
+    render(vnode2, root);
+    expect(root.innerHTML).toBe('<div></div>');
+  });
 });

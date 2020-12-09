@@ -146,13 +146,13 @@ function createRenderer(options: RenderOptions): any {
       case ChildFlags.MULTI_CHILDREN:
         switch (nextChildFlag) {
           case ChildFlags.NO_CHILD:
-            (nextChildren as Array<VNode | string>).forEach((child) => {
-              mount(child as VNode, container);
+            (prevChildren as Array<VNode | string>).forEach((child) => {
+              unmount(child as VNode, container);
             });
             break;
           case ChildFlags.SINGLE_CHILD:
-            (nextChildren as Array<VNode | string>).forEach((child) => {
-              mount(child as VNode, container);
+            (prevChildren as Array<VNode | string>).forEach((child) => {
+              unmount(child as VNode, container);
             });
             mount(nextChildren as VNode, container);
             break;
