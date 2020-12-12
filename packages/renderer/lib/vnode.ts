@@ -2,6 +2,7 @@ import { keys } from './utils';
 
 export interface VNode {
   sel: string | undefined;
+  key?: any;
   flag: VNodeFlags;
   childFlag: ChildFlags;
   elm: Node | null /* Reference of real node */;
@@ -13,6 +14,7 @@ export interface VNodeData {
   class?: any;
   style?: any;
   props?: any;
+  key?: any;
   [eventName: string]: any;
 }
 

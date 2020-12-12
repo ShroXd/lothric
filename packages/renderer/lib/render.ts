@@ -1,6 +1,8 @@
 import { getRenderPreset, RenderOptions } from './render-options';
-import { isString, keys } from './utils';
+import { isString, isUndefined, keys, lis } from './utils';
 import { ChildFlags, VNode, VNodeFlags } from './vnode';
+
+type VNodeArray = Array<VNode>;
 
 export function renderer() {
   const options = getRenderPreset();
@@ -157,7 +159,131 @@ function createRenderer(options: RenderOptions): any {
             mount(nextChildren as VNode, container);
             break;
           case ChildFlags.MULTI_CHILDREN:
-            // TODO diff
+            // TODO improve comment and h function for VNode.key
+            /* Duplicate prefix nodes Index */
+            let start = 0;
+            /* The index of a repeated suffix node for prev child nodes */
+            let prevEnd = (prevChildren as VNodeArray).length - 1;
+            /* The index of a repeated suffix node for next child nodes */
+            let nextEnd = (nextChildren as VNodeArray).length - 1;
+
+            let prevVNode = (prevChildren as VNodeArray)[start];
+            let nextVNode = (nextChildren as VNodeArray)[start];
+
+            /* Duplicate delection */
+            mark: {
+              while (prevVNode.key == nextVNode.key) {
+                /* Check deplicate prefix nodes border */
+                patch(prevVNode, nextVNode, container);
+                start++;
+
+                if (start > prevEnd || start > nextEnd) {
+                  break mark;
+                }
+
+                prevVNode = (prevChildren as VNodeArray)[start];
+                nextVNode = (nextChildren as VNodeArray)[start];
+              }
+
+              prevVNode = (prevChildren as VNodeArray)[prevEnd];
+              nextVNode = (nextChildren as VNodeArray)[nextEnd];
+
+              while (prevVNode.key === nextVNode.key) {
+                /* Check deplicate prefix nodes border */
+                patch(prevVNode, nextVNode, container);
+                prevEnd--;
+                nextEnd--;
+
+                if (start > prevEnd || start > nextEnd) {
+                  break mark;
+                }
+
+                prevVNode = (prevChildren as VNodeArray)[prevEnd];
+                nextVNode = (nextChildren as VNodeArray)[nextEnd];
+              }
+            }
+
+            /* Handle redundant & missing nodes */
+            if (start > prevEnd && start <= nextEnd) {
+              /* 1. The unprocessed area is a regular triangle */
+              const pos = nextEnd + 1;
+              // const refNode = pos < (nextChildren as VNodeArray).length ? (nextChildren as VNodeArray)[pos].elm : null;
+              while (start < pos) {
+                // TODO support mount element before ref node
+                mount((nextChildren as VNodeArray)[start++], container);
+              }
+            } else if (start > nextEnd) {
+              /* 2. The unprocessed area is a inverted triangle */
+              while (start <= nextEnd) {
+                container.removeChild((prevChildren as VNodeArray)[start++].elm);
+              }
+            } else {
+              /* 3. The unprocessed area is a trapezoid */
+              const nextLeft = nextEnd - start + 1;
+              const positions = Array(nextEnd - start).fill(
+                -1,
+              ); /* The position of the next children's node in the old children nodes */
+              const prevStart = start;
+              const nextStart = start;
+
+              const keyDict = {};
+              let moved = false;
+              let pos = 0;
+              let patched = 0;
+
+              for (let i = nextStart; i <= nextEnd; i++) {
+                keyDict[nextChildren?.[i].key] = i;
+              }
+
+              for (let i = prevStart; i <= prevEnd; i++) {
+                prevVNode = prevChildren?.[i];
+                if (patched < nextLeft) {
+                  const k = keyDict[prevVNode.key];
+                  if (isUndefined(k)) {
+                    container.removeChild(prevVNode.elm);
+                  } else {
+                    nextVNode = nextChildren?.[k];
+                    patch(prevVNode, nextVNode, container);
+                    patched++;
+                    positions[k - nextStart] = i;
+
+                    if (k < pos) {
+                      moved = true;
+                    } else {
+                      pos = k;
+                    }
+                  }
+                } else {
+                  container.removeChild(prevVNode.elm);
+                }
+              }
+
+              if (moved) {
+                const seq = lis(positions);
+                let last = seq.length - 1;
+
+                for (let i = nextLeft - 1; i >= 0; i--) {
+                  if (positions[i] === -1) {
+                    /* mount new node */
+                    const pos = i + nextStart;
+                    const nextVNode = nextChildren?.[pos];
+                    const nextPos = pos + 1;
+                    console.log(nextPos, nextVNode);
+                    // TODO improve mount function
+                    // mount()
+                  } else if (i !== seq[last]) {
+                    /* move node */
+                    const pos = i + nextStart;
+                    const nextVNode = nextChildren?.[pos];
+                    const nextPos = pos + 1;
+                    console.log(nextPos, nextVNode);
+                    // TODO insertBefore
+                  } else {
+                    last--;
+                  }
+                }
+              }
+            }
             break;
         }
         break;
