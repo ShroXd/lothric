@@ -159,7 +159,6 @@ function createRenderer(options: RenderOptions): any {
             mount(nextChildren as VNode, container);
             break;
           case ChildFlags.MULTI_CHILDREN:
-            // TODO improve comment and h function for VNode.key
             /* Duplicate prefix nodes Index */
             let start = 0;
             /* The index of a repeated suffix node for prev child nodes */
@@ -172,7 +171,7 @@ function createRenderer(options: RenderOptions): any {
 
             /* Duplicate delection */
             mark: {
-              while (prevVNode.key == nextVNode.key) {
+              while (prevVNode.key === nextVNode.key) {
                 /* Check deplicate prefix nodes border */
                 patch(prevVNode, nextVNode, container);
                 start++;
@@ -203,6 +202,8 @@ function createRenderer(options: RenderOptions): any {
               }
             }
 
+            // TODO for start to end
+
             /* Handle redundant & missing nodes */
             if (start > prevEnd && start <= nextEnd) {
               /* 1. The unprocessed area is a regular triangle */
@@ -214,7 +215,7 @@ function createRenderer(options: RenderOptions): any {
               }
             } else if (start > nextEnd) {
               /* 2. The unprocessed area is a inverted triangle */
-              while (start <= nextEnd) {
+              while (start <= prevEnd) {
                 container.removeChild((prevChildren as VNodeArray)[start++].elm);
               }
             } else {
@@ -230,6 +231,15 @@ function createRenderer(options: RenderOptions): any {
               let moved = false;
               let pos = 0;
               let patched = 0;
+
+              const subPrev = (prevChildren as VNodeArray).slice(start, prevEnd + 1);
+              const subNext = (nextChildren as VNodeArray).slice(start, nextEnd + 1);
+
+              (subNext as VNodeArray).forEach((vnode) => {
+                if ((subPrev as VNodeArray).indexOf(vnode) === -1) {
+                  mount(vnode, container);
+                }
+              });
 
               for (let i = nextStart; i <= nextEnd; i++) {
                 keyDict[nextChildren?.[i].key] = i;
