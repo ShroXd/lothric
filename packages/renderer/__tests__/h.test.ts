@@ -6,6 +6,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     const vnode = h('div');
     expect(vnode).toStrictEqual({
       sel: 'div',
+      key: null,
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data: undefined,
@@ -19,6 +20,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     const vnode = h('div', data);
     expect(vnode).toStrictEqual({
       sel: 'div',
+      key: null,
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data,
@@ -32,11 +34,13 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     const vnode = h('div', data, h('span'));
     expect(vnode).toStrictEqual({
       sel: 'div',
+      key: null,
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data,
       children: {
         sel: 'span',
+        key: null,
         flag: VNodeFlags.ELEMENT_HTML,
         elm: undefined,
         data: undefined,
@@ -51,11 +55,13 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     const vnode = h('div', h('span'));
     expect(vnode).toStrictEqual({
       sel: 'div',
+      key: null,
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data: undefined,
       children: {
         sel: 'span',
+        key: null,
         flag: VNodeFlags.ELEMENT_HTML,
         elm: undefined,
         data: undefined,
@@ -70,12 +76,14 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     const vnode = h('div', [h('span'), h('span')]);
     expect(vnode).toStrictEqual({
       sel: 'div',
+      key: null,
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data: undefined,
       children: [
         {
           sel: 'span',
+          key: null,
           flag: VNodeFlags.ELEMENT_HTML,
           elm: undefined,
           data: undefined,
@@ -84,6 +92,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
         },
         {
           sel: 'span',
+          key: null,
           flag: VNodeFlags.ELEMENT_HTML,
           elm: undefined,
           data: undefined,
@@ -100,12 +109,14 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
     const vnode = h('div', data, [h('span'), h('span')]);
     expect(vnode).toStrictEqual({
       sel: 'div',
+      key: null,
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data,
       children: [
         {
           sel: 'span',
+          key: null,
           flag: VNodeFlags.ELEMENT_HTML,
           elm: undefined,
           data: undefined,
@@ -114,6 +125,7 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
         },
         {
           sel: 'span',
+          key: null,
           flag: VNodeFlags.ELEMENT_HTML,
           elm: undefined,
           data: undefined,
@@ -126,9 +138,11 @@ describe('@lothric/renderer/h.ts (base test case)', () => {
   });
 
   it('should create an element with data & text child node', () => {
+    // TODO should text child node needs a key?
     const vnode = h('span', { class: 'title' }, 'I am a text');
     expect(vnode).toStrictEqual({
       sel: 'span',
+      key: null,
       flag: VNodeFlags.ELEMENT_HTML,
       elm: undefined,
       data: { class: 'title' },

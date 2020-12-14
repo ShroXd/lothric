@@ -59,7 +59,9 @@ export function vnode(
 ): VNode {
   if (keys(data).length === 0) data = undefined;
   if (!childFlag) childFlag = ChildFlags.NO_CHILD;
-  return { sel, flag, childFlag, elm, data, children };
+  const key = data?.key || null;
+
+  return { sel, key, flag, childFlag, elm, data, children };
 }
 
 export function createTextVNode(text: string) {
