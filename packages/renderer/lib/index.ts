@@ -1,3 +1,3 @@
-export function renderer() {
-  return 'core';
-}
+import { renderer } from './render';
+
+export { renderer };
