@@ -120,4 +120,85 @@ describe('@lothric/renderer/render.ts (diff)', () => {
     expect(elm2.children.length).toBe(4);
     expect(getChildrenKeys(elm2)).toStrictEqual([1, 2, 4, 5]);
   });
+
+  test('move single node forward', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+
+    const elm2 = renderChildren([2, 1, 3, 4]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([2, 1, 3, 4]);
+  });
+
+  test('move multi nodes forward', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+
+    const elm2 = renderChildren([2, 3, 1, 4]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([2, 3, 1, 4]);
+  });
+
+  test('move single node backwards', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+
+    const elm2 = renderChildren([1, 2, 4, 3]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([1, 2, 4, 3]);
+  });
+
+  test('move multi nodes backwards', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+
+    const elm2 = renderChildren([1, 4, 2, 3]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([1, 4, 2, 3]);
+  });
+
+  test('move first node to last', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+
+    const elm2 = renderChildren([2, 3, 4, 1]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([2, 3, 4, 1]);
+  });
+
+  test('swap first and last', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+
+    const elm2 = renderChildren([4, 2, 3, 1]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([4, 2, 3, 1]);
+  });
+
+  test('remove first and append last', () => {
+    const elm1 = renderChildren([1, 2, 3]);
+    expect(elm1.children.length).toBe(3);
+
+    const elm2 = renderChildren([2, 3, 4]);
+    expect(elm2.children.length).toBe(3);
+    expect(getChildrenKeys(elm2)).toStrictEqual([2, 3, 4]);
+  });
+
+  test('remove first and replace last', () => {
+    const elm1 = renderChildren([1, 2, 3]);
+    expect(elm1.children.length).toBe(3);
+
+    const elm2 = renderChildren([2, 4]);
+    expect(elm2.children.length).toBe(2);
+    expect(getChildrenKeys(elm2)).toStrictEqual([2, 4]);
+  });
+
+  test('reverse nodes', () => {
+    const elm1 = renderChildren([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(elm1.children.length).toBe(8);
+
+    const elm2 = renderChildren([8, 7, 6, 5, 4, 3, 2, 1]);
+    expect(elm2.children.length).toBe(8);
+    expect(getChildrenKeys(elm2)).toStrictEqual([8, 7, 6, 5, 4, 3, 2, 1]);
+  });
 });
