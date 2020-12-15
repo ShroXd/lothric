@@ -1,3 +1,5 @@
+import { VNode } from './vnode';
+
 const { keys, assign: extend } = Object;
 
 export { keys, extend };
@@ -5,6 +7,7 @@ export { keys, extend };
 export const isArray = Array.isArray;
 export const isString = (val: unknown): val is string => typeof val === 'string';
 export const isUndefined = (obj: any): obj is undefined => typeof obj === 'undefined';
+export const isSameVNodeKey = (n1: VNode, n2: VNode): boolean => n1.key === n2.key;
 
 /* https://en.wikipedia.org/wiki/Longest_increasing_subsequence */
 export const lis = (arr: any) => {

@@ -31,7 +31,7 @@ describe('@lothric/renderer/render.ts (diff)', () => {
     root = document.createElement('div');
   });
 
-  it('should handle repetitive prefix nodes', () => {
+  test('repetitive prefix nodes', () => {
     const elm1 = renderChildren([1, 2, 3, 4]);
     expect(elm1.children.length).toBe(4);
     expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4]);
@@ -39,5 +39,85 @@ describe('@lothric/renderer/render.ts (diff)', () => {
     const elm2 = renderChildren([1, 2, 3, 5]);
     expect(elm2.children.length).toBe(4);
     expect(getChildrenKeys(elm2)).toStrictEqual([1, 2, 3, 5]);
+  });
+
+  test('repetitive suffix nodes', () => {
+    const elm1 = renderChildren([4, 1, 2, 3]);
+    expect(elm1.children.length).toBe(4);
+    expect(getChildrenKeys(elm1)).toStrictEqual([4, 1, 2, 3]);
+
+    const elm2 = renderChildren([5, 1, 2, 3]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([5, 1, 2, 3]);
+  });
+
+  test('insert end', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+    expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4]);
+
+    const elm2 = renderChildren([1, 2, 3, 4, 5, 6]);
+    expect(elm2.children.length).toBe(6);
+    expect(getChildrenKeys(elm2)).toStrictEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  test('insert before', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+    expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4]);
+
+    const elm2 = renderChildren([5, 6, 1, 2, 3, 4]);
+    expect(elm2.children.length).toBe(6);
+    expect(getChildrenKeys(elm2)).toStrictEqual([5, 6, 1, 2, 3, 4]);
+  });
+
+  test('insert in middle', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+    expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4]);
+
+    const elm2 = renderChildren([1, 2, 5, 6, 3, 4]);
+    expect(elm2.children.length).toBe(6);
+    expect(getChildrenKeys(elm2)).toStrictEqual([1, 2, 5, 6, 3, 4]);
+  });
+
+  test('insert at beginning & end', () => {
+    const elm1 = renderChildren([1, 2, 3, 4]);
+    expect(elm1.children.length).toBe(4);
+    expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4]);
+
+    const elm2 = renderChildren([5, 6, 1, 2, 3, 4, 7, 8]);
+    // expect(elm2.children.length).toBe(8);
+    expect(getChildrenKeys(elm2)).toStrictEqual([5, 6, 1, 2, 3, 4, 7, 8]);
+  });
+
+  test('remove from beginning', () => {
+    const elm1 = renderChildren([1, 2, 3, 4, 5]);
+    expect(elm1.children.length).toBe(5);
+    expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4, 5]);
+
+    const elm2 = renderChildren([3, 4, 5]);
+    expect(elm2.children.length).toBe(3);
+    expect(getChildrenKeys(elm2)).toStrictEqual([3, 4, 5]);
+  });
+
+  test('remove from end', () => {
+    const elm1 = renderChildren([1, 2, 3, 4, 5]);
+    expect(elm1.children.length).toBe(5);
+    expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4, 5]);
+
+    const elm2 = renderChildren([1, 2, 3]);
+    expect(elm2.children.length).toBe(3);
+    expect(getChildrenKeys(elm2)).toStrictEqual([1, 2, 3]);
+  });
+
+  test('remove from middle', () => {
+    const elm1 = renderChildren([1, 2, 3, 4, 5]);
+    expect(elm1.children.length).toBe(5);
+    expect(getChildrenKeys(elm1)).toStrictEqual([1, 2, 3, 4, 5]);
+
+    const elm2 = renderChildren([1, 2, 4, 5]);
+    expect(elm2.children.length).toBe(4);
+    expect(getChildrenKeys(elm2)).toStrictEqual([1, 2, 4, 5]);
   });
 });
