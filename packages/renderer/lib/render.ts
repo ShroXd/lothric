@@ -309,10 +309,10 @@ function createRenderer(options: RenderOptions): any {
        */
       const seq = moved ? lis(newIndexToOldIndexMap) : [];
       let remaining = seq.length - 1;
-      for (let i = needPatch; i >= 0; i--) {
+      for (let i = needPatch - 1; i >= 0; i--) {
         const nextVNode = nextChildren[nextStart + i];
         if (newIndexToOldIndexMap[i] === 0) {
-          mount(nextVNode, container, nextChildren?.[nextStart + 1]?.elm || undefined);
+          mount(nextVNode, container, nextChildren?.[nextStart + i + 1]?.elm || undefined);
         } else if (moved) {
           if (remaining < 0 || i !== seq[remaining]) {
             container.insertBefore(nextVNode.elm as Node, nextChildren?.[i + nextStart + 1]?.elm || null);
