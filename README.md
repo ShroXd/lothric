@@ -10,7 +10,7 @@
 - [x] Reactivity
 - [x] Compiler
 - [x] Render
-- [] Core
+- [ ] Core
 
 ## 各模块原理解析
 
