@@ -1,3 +1,3 @@
-export function core() {
-  return 'core';
-}
+import { Component } from './component';
+
+export { Component };
