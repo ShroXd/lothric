@@ -8,7 +8,7 @@
 ## TODO
 
 - [x] Reactivity
-- [x] Compiler
+- [ ] Compiler
 - [x] Render
 - [ ] Core
 
